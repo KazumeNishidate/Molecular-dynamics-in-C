@@ -1,0 +1,54 @@
+
+　ab initio Molecular Dynamics code (AB-MDC)
+
+  o BHS pseudopotential 
+  o CA/PZ exchange correlation functional
+  o CP molecular dynamics
+  o only for Si mono-atomic system
+  o non-spin-polarization 
+  o plane-wave basis
+  o running on Linux(gcc)
+
+
+　このコードは、第一原理MD法の勉強のため、CAMP Atami （JCPE公開版P089）
+のプログラム構造を参考に、C言語にて作られました。ここに記して感謝致しま
+す。
+
+  We developed the code to enhance our understanding of the
+first-principle molecular dynamics method referencing the program
+structure of the CAMP Atami (JCPE P089). We greatly appreciate the
+CAMP Atami developers.
+
+  Kazume Nishidate
+  nisidate@iwate-u.ac.jp
+
+========================
+
+How to run.
+
+[nisidate@rikyu abmd]$ make
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o main.o main.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o control.o control.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o init.o init.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o ext.o ext.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o bhs_init.o bhs_init.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o plane_wave.o plane_wave.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o pseudo.o pseudo.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o eigen.o eigen.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o fermi.o fermi.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o fft.o fft.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o ewald.o ewald.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o xc.o xc.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o energy.o energy.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o quench.o quench.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o next.o next.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o monitor.o monitor.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o pt.o pt.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops   -c -o msd.o msd.c
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops main.o control.o init.o ext.o bhs_init.o plane_wave.o pseudo.o eigen.o fermi.o fft.o ewald.o xc.o energy.o quench.o next.o monitor.o pt.o msd.o -lm -o md 
+
+[nisidate@rikyu abmd]$ ./md
+
+
+[nisidate@rikyu abmd]$ make clean
+rm -f md  *.o *~ "#"* *.ln *core ./headers/*~

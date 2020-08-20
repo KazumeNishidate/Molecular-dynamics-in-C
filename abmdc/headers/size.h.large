@@ -1,0 +1,15 @@
+/*------------------ size.h ------------------------------------------*/
+#define MAX_ATOM_TYPE        5
+#define MAX_ATOMS           70
+
+#define MAX_WAVE_VECTOR1  900  /*  800 */
+#define MAX_WAVE_VECTOR2  4000  /*  700 */
+#define MAX_WAVE_VECTORS  5000  /* 1000 */ /* temporary array size */
+#define EWALD_VECTORS     1000  /*  920 */
+
+#define BESSEL_MAX         200  /* 100 */
+
+#define MAX_BANDS          200
+#define FFTPTSX             32
+#define FFTPTSY             32
+#define FFTPTSZ             32
