@@ -1,0 +1,201 @@
+
+Tight-binding MD code written by C language: TB-MDC.
+
+  The program structure is similar to that of the MDC, a classical
+  molecular dynamics code written in C language, which is also
+  distributed in this site. The code adopts most basic strategy to
+  compute the TB matrix elements (diagonal version : Order N^3 method).
+
+  This is a free software.
+
+  K. Nishidate
+  nisidate@iwate-u.ac.jp
+
+
+References
+
+        [1] TBMD for Carbon 
+            C. H. Xu, C. Z. Wang, C. T. Chan, and K. M. Ho,
+            ``A transferable tight-binding potential for carbon'',
+            J. Phys. Condens. Matter, Vol. 4, 6047 (1992).        
+
+        [2] I.Kwon, R.Biswas, C.Z.Wang, K.M.Ho, and C.M.Soukoulis 
+           ``Transferable tight-binding models for silicon'',    
+           Physical Review B, Vol.49, Num.11, 7242 (1994).       
+
+---------------------------------------------------------------------------
+
+(1) make the tbmd
+    Move to the "program" directory, and just type "make".
+
+nisidate@rikyu program]$ ls
+Makefile*      control.c*  files.c*   main.c*  note*	      pt.c*    tb.c*
+Makefile.X*    debug.c*    init.c*    md.h*    potential.h*   real.c*  xsrc/
+Makefile.noX*  ext.c*	   jacobi.c*  msd.c*   prototypes.h*  rv.c*
+
+[nisidate@rikyu program]$ make
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c main.c -o main.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c ext.c -o ext.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c pt.c -o pt.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c control.c -o control.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c init.c -o init.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c files.c -o files.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c real.c -o real.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c rv.c -o rv.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c msd.c -o msd.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c tb.c -o tb.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c jacobi.c -o jacobi.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c debug.c -o debug.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops main.o ext.o pt.o control.o init.o files.o real.o rv.o msd.o tb.o jacobi.o debug.o -lm -o md 
+
+(2) execute the code: type "md"
+
+[nisidate@rikyu program]$ ./md
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+     1   0.03   -7.78   -7.75   237.75   5.649   3.57 3.57 3.57   0.000 
+     2   0.03   -7.78   -7.75   231.07   5.667   3.57 3.57 3.57   0.000 
+     3   0.03   -7.78   -7.75   215.13   5.670   3.57 3.57 3.57   0.000 
+     4   0.02   -7.78   -7.75   192.28   5.661   3.57 3.57 3.57   0.000 
+     5   0.02   -7.77   -7.75   164.47   5.642   3.57 3.57 3.57   0.000 
+     6   0.02   -7.77   -7.75   134.18   5.615   3.57 3.57 3.57   0.000 
+     7   0.01   -7.77   -7.75   104.02   5.588   3.57 3.57 3.57   0.001 
+     8   0.01   -7.76   -7.75    76.57   5.559   3.57 3.57 3.57   0.001 
+     9   0.01   -7.76   -7.75    54.02   5.533   3.57 3.57 3.57   0.001 
+    10   0.00   -7.76   -7.75    38.00   5.511   3.57 3.57 3.57   0.001 
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+
+//////////////////////////////////////
+
+
+(3) make the tbmd with the X-Window interface
+
+[nisidate@rikyu program]$ ls
+Makefile*      debug.c*  files.o    main.c*  msd.o	    pt.o     tb.c*
+Makefile.X*    debug.o	 init.c*    main.o   note*	    real.c*  tb.o
+Makefile.noX*  ext.c*	 init.o     md*      potential.h*   real.o   xsrc/
+control.c*     ext.o	 jacobi.c*  md.h*    prototypes.h*  rv.c*
+control.o      files.c*  jacobi.o   msd.c*   pt.c*	    rv.o
+
+[nisidate@rikyu program]$ cp Makefile.X Makefile
+cp: `Makefile' を上書きしてもよろしいですか(yes/no)? y
+
+[nisidate@rikyu program]$ make clean
+rm -f *.o *~ "#"* *.ln ./xsrc/*.o ./xsrc/*~ ./xsrc/"#"* ./xsrc/*.ln md 
+
+[nisidate@rikyu program]$ make
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD main.c -o main.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD ext.c -o ext.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD pt.c -o pt.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD control.c -o control.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD init.c -o init.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD files.c -o files.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD real.c -o real.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD rv.c -o rv.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD msd.c -o msd.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD tb.c -o tb.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD jacobi.c -o jacobi.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD debug.c -o debug.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xdmain.c -o xsrc/xdmain.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xdinit.c -o xsrc/xdinit.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xdicon.c -o xsrc/xdicon.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xhist.c -o xsrc/xhist.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xmsd.c -o xsrc/xmsd.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xnet.c -o xsrc/xnet.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/network.c -o xsrc/network.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xunit.c -o xsrc/xunit.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c -I/usr/X11R6/include -DXD xsrc/xmycolor.c -o xsrc/xmycolor.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops main.o ext.o pt.o control.o init.o files.o real.o rv.o msd.o tb.o jacobi.o debug.o ./xsrc/xdmain.o ./xsrc/xdinit.o ./xsrc/xdicon.o ./xsrc/xhist.o ./xsrc/xmsd.o ./xsrc/xnet.o ./xsrc/network.o ./xsrc/xunit.o ./xsrc/xmycolor.o -lm -L/usr/X11R6/lib -lX11 -o md 
+
+[nisidate@rikyu program]$ ./md
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+     1   0.03   -7.78   -7.75   263.88   5.713   3.57 3.57 3.57   0.000 
+     2   0.03   -7.78   -7.75   258.91   5.748   3.57 3.57 3.57   0.000 
+     3   0.03   -7.78   -7.75   241.01   5.759   3.57 3.57 3.57   0.000 
+     4   0.03   -7.78   -7.75   215.91   5.752   3.57 3.57 3.57   0.000 
+     5   0.02   -7.77   -7.75   185.56   5.737   3.57 3.57 3.57   0.000 
+     6   0.02   -7.77   -7.75   152.35   5.714   3.57 3.57 3.57   0.000 
+     7   0.02   -7.76   -7.75   118.87   5.689   3.57 3.57 3.57   0.001 
+     8   0.01   -7.76   -7.75    87.69   5.656   3.57 3.57 3.57   0.001 
+     9   0.01   -7.76   -7.75    61.11   5.627   3.57 3.57 3.57   0.001 
+    10   0.01   -7.75   -7.75    40.96   5.601   3.57 3.57 3.57   0.001 
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////
+
+
+(4) TBMD computation of the Si system
+
+[nisidate@rikyu program]$ ls
+Makefile*      debug.c*  files.o    main.c*  msd.o	    pt.o     tb.c*
+Makefile.X*    debug.o	 init.c*    main.o   note*	    real.c*  tb.o
+Makefile.noX*  ext.c*	 init.o     md*      potential.h*   real.o   xsrc/
+control.c*     ext.o	 jacobi.c*  md.h*    prototypes.h*  rv.c*
+control.o      files.c*  jacobi.o   msd.c*   pt.c*	    rv.o
+[nisidate@rikyu program]$ make clean
+rm -f *.o *~ "#"* *.ln ./xsrc/*.o ./xsrc/*~ ./xsrc/"#"* ./xsrc/*.ln md 
+
+[nisidate@rikyu program]$ /bin/cp ../examples/Si/* ./
+[nisidate@rikyu program]$ cp Makefile.noX Makefile
+cp: `Makefile' を上書きしてもよろしいですか(yes/no)? y
+
+[nisidate@rikyu program]$ make clean
+rm -f *.o *~ "#"* *.ln ./xsrc/*.o ./xsrc/*~ ./xsrc/"#"* ./xsrc/*.ln md 
+
+[nisidate@rikyu program]$ make
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c main.c -o main.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c ext.c -o ext.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c pt.c -o pt.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c control.c -o control.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c init.c -o init.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c files.c -o files.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c real.c -o real.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c rv.c -o rv.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c msd.c -o msd.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c tb.c -o tb.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c jacobi.c -o jacobi.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops -c debug.c -o debug.o 
+gcc -Wall -O2 -finline-functions -fomit-frame-pointer -funroll-loops main.o ext.o pt.o control.o init.o files.o real.o rv.o msd.o tb.o jacobi.o debug.o -lm -o md 
+[nisidate@rikyu program]$ ./md
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+     1   0.03    5.89    5.92   239.77   0.166   5.42 5.42 5.42   0.000 
+     2   0.03    5.86    5.89   230.32   0.160   5.42 5.42 5.42   0.000 
+     3   0.03    5.86    5.88   215.83   0.150   5.42 5.42 5.42   0.000 
+     4   0.03    5.86    5.88   198.08   0.137   5.42 5.42 5.42   0.000 
+     5   0.02    5.86    5.88   177.62   0.123   5.42 5.42 5.42   0.000 
+     6   0.02    5.86    5.88   155.44   0.108   5.42 5.42 5.42   0.000 
+     7   0.02    5.86    5.88   132.70   0.092   5.42 5.42 5.42   0.001 
+     8   0.01    5.86    5.87   110.36   0.077   5.42 5.42 5.42   0.001 
+     9   0.01    5.86    5.87    89.33   0.062   5.42 5.42 5.42   0.001 
+    10   0.01    5.86    5.87    70.52   0.049   5.42 5.42 5.42   0.001 
+  ------------------------------------------------------------------------
+  step:  Ek  : Up[eV] : Et[eV] : T[K] : P[Gpa]  ( Ax   Ay   Az )  MSD [A^2]
+  ------------------------------------------------------------------------
+    11   0.01    5.86    5.87    54.78   0.038   5.42 5.42 5.42   0.001 
+
+
+[nisidate@rikyu program]$ ls
+Makefile*      debug.c*  files.o    main.c*  msd.o	    pt.o     tb.c*
+Makefile.X*    debug.o	 init.c*    main.o   note*	    real.c*  tb.o
+Makefile.noX*  ext.c*	 init.o     md*      potential.h*   real.o   xsrc/
+control.c*     ext.o	 jacobi.c*  md.h*    prototypes.h*  rv.c*
+control.o      files.c*  jacobi.o   msd.c*   pt.c*	    rv.o
+[nisidate@rikyu program]$ make clean
+rm -f *.o *~ "#"* *.ln ./xsrc/*.o ./xsrc/*~ ./xsrc/"#"* ./xsrc/*.ln md 
+[nisidate@rikyu program]$ ls
+Makefile*      control.c*  files.c*   main.c*  note*	      pt.c*    tb.c*
+Makefile.X*    debug.c*    init.c*    md.h*    potential.h*   real.c*  xsrc/
+Makefile.noX*  ext.c*	   jacobi.c*  msd.c*   prototypes.h*  rv.c*
+[nisidate@rikyu program]$ exit
+exit
+
+---------------------------------------------------------------------------

@@ -1,0 +1,60 @@
+***********************************************************************
+ TBMD for Carbon
+
+ diamond system: bond length at equilibrium is 3.55984  [A]
+
+  # total number of particles sys.N was set in "get_control_param()". 
+  # positions are set in set_roc().
+
+ Ref.:
+     C. H. Xu, C. Z. Wang, C. T. Chan, and K. M. Ho,
+     ``A transferable tight-binding potential for carbon'',
+     J. Phys. Condens. Matter, Vol. 4, 6047 (1992).
+
+-----------------------------------------------------------------------
+ 2-Carbon system: bond length at equilibrium is 1.4133 [A]          
+
+  # total number of particles sys.N was set in "get_control_param()". 
+  # positions are set in set_roc().
+
+ Ref.:
+     C. H. Xu, C. Z. Wang, C. T. Chan, and K. M. Ho,
+     ``A transferable tight-binding potential for carbon'',
+     J. Phys. Condens. Matter, Vol. 4, 6047 (1992).
+
+-----------------------------------------------------------------------
+ 3-Carbon system: bond length at equilibrium is 1.310 [A]
+
+  # total number of particles sys.N was set in "get_control_param()". 
+  # positions are set in set_roc().
+
+ Ref.:
+     C. H. Xu, C. Z. Wang, C. T. Chan, and K. M. Ho,
+     ``A transferable tight-binding potential for carbon'',
+     J. Phys. Condens. Matter, Vol. 4, 6047 (1992).
+
+-----------------------------------------------------------------------
+ 4-Carbon system: bond length at equilibrium is 1.326, 1.311  [A]
+
+  # total number of particles sys.N was set in "get_control_param()". 
+  # positions are set in set_roc().
+
+ Ref.:
+     C. H. Xu, C. Z. Wang, C. T. Chan, and K. M. Ho,
+     ``A transferable tight-binding potential for carbon'',
+     J. Phys. Condens. Matter, Vol. 4, 6047 (1992).
+***********************************************************************
+
+
+***********************************************************************
+ TBMD for Silicon
+
+ diamond system: bond length at equilibrium is 5.41959[A]
+
+  # total number of particles sys.N was set in "get_control_param()". 
+  # positions are set in set_roc().
+
+ Ref.:	I.Kwon, R.Biswas, C.Z.Wang, K.M.Ho, and C.M.Soukoulis 
+	``Transferable tight-binding models for silicon'',    
+	Physical Review B, Vol.49, Num.11, 7242 (1994). 
+***********************************************************************
