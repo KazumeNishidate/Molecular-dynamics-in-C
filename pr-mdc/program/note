@@ -1,0 +1,18 @@
+NaCl crystal with Huggins-Mayer potentail.
+
+potential function;  generalized Huggins-Mayer form
+parameters;          Tosi-Fumi set
+
+dt = 3.0 [fs]
+alpha = 0.20375 [A^(-1)]
+sys.hm = 20
+cut off = 8.0 [A]
+
+REF.: 
+
+[1] F. G. Fumi and M. P. Tosi, J. Phys. Chem. Solids, Vol. 25, 31 (1964).
+[2] M. P. Tosi and F. G. Fumi, J. Phys. Chem. Solids, Vol. 25, 45 (1964).
+[3] E. R. Cowley, G. Jacucci, M. L. Klein, and I. R. McDonald,
+    "Anharmonic effects in the phonon spectra of sodium chloride",
+    Phys. Rev. B., Vol. 14, No. 4, 1758 (1976).
+

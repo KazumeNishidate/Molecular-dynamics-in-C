@@ -1,0 +1,16 @@
+PR-MDC
+
+  Classical molecular dynamics code implementing the
+  Parrinello-Rahman's method for the pressure regulation.
+
+  The code was developed by the TEAM IEMD project.
+  See also the manual file contained in the MDC (classical molecular
+  dynamics calculation program). 
+
+  Be aware that the code is still little bit buggy. ;-)
+
+  https://sites.google.com/site/nisidatelab/home/sofutouea
+
+  Kazume Nishidate
+  nisidate@iwate-u.ac.jp
+
