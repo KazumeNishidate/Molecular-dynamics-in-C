@@ -1,0 +1,138 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+
+
+   Here we release the code MDC.
+
+
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+
+Below is the note for the old version and presented here just for the
+reference purpose.
+==========================================================================
+
+   IEMD2 Ver. 1.8 : Classical Molecular Dynamics Simulation C-Package
+
+           Copyright (C) 2000 IEMD project team [TEAM IEMD]
+
+==========================================================================
+
+* Special features of IEMD:
+
+    + Temperature and Pressure control (forced scaling)
+    + EWALD with look-up table calculation for Coulombic interaction
+    + Gear or Verlet method can be selected as a numerical integration
+    + lookup table for the short range potential [0.0001 [A] division]
+    + MSD (mean squared displacement) calculation [optional]
+    + automatic "alpha" parameter evaluation [optional]
+    + real-time X window interface (X11R5, X11R6)
+    + relatively high performance MD written in standard ANSI-C
+    + highly flexible and compact program system
+
+
+* Presented by IEMD project team;
+
+    + K. Nishidate [1]
+    + Dr. M. Hasegawa [1]
+      Dr. K. Nishikawa [2] 
+      Dr. D. Saito [2]
+      Dr. H. Nagao [2]
+      Dr. Mamoru Baba [1]
+
+      [1] Department of Electrical and Electronic Engineering
+          Faculty of Engineering, IWATE UNIVERSITY
+          Morioka 020-8551, JAPAN
+
+      [2] Department of Computational Science
+          Faculty of Science, KANAZAWA UNIVERSITY
+          Kanazawa 920-1192, JAPAN
+
+     --------------- IEMD contributers --------------------------
+        - Takanori Ito
+	- Kumiko Funatogawa
+        - Hideyuki Chiba
+        - Tatsuya Kondou
+        - Mikihisa Motomiya 
+        - Hirofumi Himuro 
+        - Youichi Mizuko
+        - Kazuo Fukuda 
+        - Daisuke Natsusaka
+     ------------------------------------------------------------
+
+--------------------------------------------------------------------------
+
+* programming history:
+
+    1994-1995 Tatsuya Kondou: * prototype programming.
+    1994-1995 Mikihisa Motomiya: * programming and environment setting. 
+    1995-1996 Hirofumi Himuro: * environment setting.
+    1996-1997 Youichi Mizuko: * prototype programming for S(k,w).
+    1997-1998 Kazuo Fukuda: * X window interface development.
+    1997-2000 Hideyuki Chiba: * application to transition metal oxide.
+    1997      Kouichi Kodama: * beta version tester
+    1997      Hiroyuki Kawabe: * beta version tester
+    1998-1998 Kazuo Fukuda: * superionic conductor CaF2
+    1998      Daisuke Natsusaka: * superionic conductor AgI
+    1998      Kazuo Fukuda and Daisuke Natsusaka: * CaF2
+    1998-1998 Kazuo Fukuda: * Si and Ge with SW potential
+                            * 2nd version (Bug-FIX) at 1998.
+    1998-1998 Kazuo Fukuda: * Si, Ge and C with AT potential
+    1998-1999 Daisuke Natsusaka: Gear k=7 F-representation implement
+              [-> Ver. 1.6]
+    2000      Tetsuhiro Nambu reported a bug of the Tersoff potential set
+              Fixed at Aug. 2000. [-> Ver. 1.7]
+    2000-     Hiroaki Saito reported a bug of the "reverse sign" of EWALD 
+              2nd term for force calculation. Fixed at Oct. 2000. 
+              [-> Ver. 1.8]
+
+    Kazume Nishidate: * programming, * performance tuning, 
+                      * bug-fix, * total coordinates.
+
+* Heartfelt thanks go to:
+
+   Professor Koichi Shindo (IWATE UNIVERSIY)
+   Professor Kaoru Ohno (YOKOHAMA KOKURITSU UNIVERSITY)
+   Professor Yasuaki Hiwatari (KANAZAWA UNIVERSITY)
+   Mr. Koji Ohta (IWATE UNIVERSITY)
+
+   and
+   Gnu Free Software Foundation, Inc.
+   PC-UNIX OS (FreeBSD and Linux) developers
+
+-------------------------------------------------------------------------
+
+* No Warranties:
+
+   We distribute IEMD through JCPE (JAPAN CHEMISTRY PROGRAM EXCHANGE
+   organization) in the hope that it will be useful, but without any
+   warranty.  No author or distributor of this software accepts
+   responsibility to anyone for the consequences of using it or for
+   whether it serves any particular purpose or works at all.
+
+   [JCPE Office] 1-7-12 Nishinenishi, Tsuchiura City 300-0848, JAPAN
+   "http://www.jcpe.net/
+
+* Comments:
+
+   If you have any trouble with the IEMD, please let me know! We might
+   be able to fix your problems in the next release.
+
+   >>> Comments, suggestions, bug fixes, and extensions are welcome! <<<
+
+   [TEAM IEMD] Kazume Nishidate 
+   Department of Electrical and Electronic Engineering,
+   Faculty of Engineering,
+   Iwate University, Morioka 020-8551, JAPAN
+  
+-------------------------------------------------------------------------
+=========================================================================
+END.
+

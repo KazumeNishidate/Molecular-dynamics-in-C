@@ -1,0 +1,16 @@
+Germanium (diamond structure) with Abell-Tersoff potential.
+
+dt = 0.38317 [fs]
+system size = 3x3x3
+
+The valiable "sys.a1" in get_control_param() of control.c was set to
+0.0 to SKIP the EWALD calculation.
+
+----------------------------------------------------------------------
+REF.: 
+  - G. C. Abell, Phys. Rev. B31, 6184 (1985).
+  - B. W. Dodson, Phys. Rev. B35, 2795 (1987).
+  - J. Tersoff, Phys. Rev. B39, 5566 (1989).
+  -    Y. Kawazoe, M. Mikami, K. Ohno, "COMPUTER SIMULATION NI-YORU
+       BUSSITSU-KAGAKU", (Japanese), KYOURITSU-SYUPPAN, P.75, (1996).
+----------------------------------------------------------------------

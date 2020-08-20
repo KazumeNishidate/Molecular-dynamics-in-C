@@ -1,0 +1,7 @@
+==========================================================================
+   IEMD2 : Classical Molecular Dynamics Simulation C-Package
+                     Copyright (C) 2000 IEMD project team [TEAM IEMD]
+==========================================================================
+
+* dynamical structure factor S(k,w) calculation example program.
+

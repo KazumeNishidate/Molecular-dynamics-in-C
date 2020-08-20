@@ -1,0 +1,240 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+
+
+   Here we release the code MDC.
+
+
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+
+Below is the note for the old version and presented here just for the
+reference purpose.
+==========================================================================
+  Classical Molecular Dynamics Simulation Package
+==========================================================================
+
+  * Note: Some examples of Makefile are saved in "iemd/batch"
+    directory. See also "batch/readme".
+
+========================================================================
+[1] How to make the IEMD (with NO X-Window interface).
+    Following is a HP-WS UNIX execution log.:
+========================================================================
+iemd@HPWS[265]# ls
+Relase.note   batch/        examples/     manual/
+abst          dynamics/     files/        program/
+
+iemd@HPWS[266]# cd program
+iemd@HPWS[267]# ls
+Makefile       ext.c          md.h           pt.c           xsrc/
+Makefile.X     files.c        msd.c          rcprcl.c
+Makefile.noX   init.c         potential.h    real.c
+control.c      main.c         prototypes.h   rv.c
+iemd@HPWS[268]# make
+   cc -c -Aa +O3   main.c -o main.o
+   cc -c -Aa +O3   ext.c -o ext.o
+   cc -c -Aa +O3   pt.c -o pt.o
+   cc -c -Aa +O3   control.c -o control.o
+   cc -c -Aa +O3   init.c -o init.o
+   cc -c -Aa +O3   files.c -o files.o
+   cc -c -Aa +O3   real.c -o real.o
+   cc -c -Aa +O3   rcprcl.c -o rcprcl.o
+   cc -c -Aa +O3   rv.c -o rv.o
+   cc -c -Aa +O3   msd.c -o msd.o
+   cc -Aa +O3   -o md  main.o ext.o pt.o control.o init.o files.o real.o 
+rcprcl.o rv.o msd.o -lm
+
+iemd@HPWS[269]# md
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+     1 7.57 -810.96 -803.40  303.32  0.092   5.63 5.63 5.63
+     2 7.40 -810.54 -803.14  296.60  0.094   5.63 5.63 5.63
+     3 6.99 -810.01 -803.03  280.12  0.253   5.63 5.63 5.63
+     4 6.41 -809.12 -802.71  257.00  0.385   5.63 5.63 5.63
+     5 5.68 -808.40 -802.72  227.91  0.525   5.63 5.63 5.63
+     6 4.86 -806.55 -801.69  195.00  0.659   5.63 5.63 5.63
+     7 4.01 -805.72 -801.71  160.83  0.795   5.63 5.63 5.63
+     8 3.19 -804.99 -801.80  127.84  0.923   5.63 5.63 5.63
+     9 2.45 -804.08 -801.62   98.41  0.998   5.63 5.63 5.63
+    10 1.86 -803.86 -802.00   74.76  1.029   5.63 5.63 5.63
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+    11 1.46 -803.55 -802.09   58.44  1.047   5.63 5.63 5.63
+    12 1.25 -803.65 -802.40   50.17  1.019   5.63 5.63 5.63
+    13 1.24 -803.84 -802.60   49.87  0.972   5.63 5.63 5.63
+    14 1.41 -804.20 -802.79   56.62  0.891   5.63 5.63 5.63
+    15 1.72 -804.48 -802.76   68.88  0.822   5.63 5.63 5.63
+    16 2.11 -805.15 -803.03   84.70  0.715   5.63 5.63 5.63
+    17 2.55 -805.60 -803.05  102.05  0.636   5.63 5.63 5.63
+    18 2.97 -806.38 -803.41  119.04  0.564   5.63 5.63 5.63
+    19 3.35 -806.56 -803.21  134.12  0.509   5.63 5.63 5.63
+    20 3.65 -806.61 -802.96  146.25  0.479   5.63 5.63 5.63
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+    21 3.87 -806.86 -803.00  154.95  0.456   5.63 5.63 5.63
+    22 3.99 -806.72 -802.73  160.16  0.465   5.63 5.63 5.63
+    23 4.04 -806.64 -802.60  162.14  0.474   5.63 5.63 5.63
+    24 4.03 -806.44 -802.41  161.49  0.495   5.63 5.63 5.63
+    25 3.97 -806.63 -802.67  158.99  0.524   5.63 5.63 5.63
+    26 3.88 -806.41 -802.54  155.52  0.558   5.63 5.63 5.63
+    27 3.79 -806.25 -802.46  151.75  0.607   5.63 5.63 5.63
+    28 3.70 -806.17 -802.47  148.33  0.629   5.63 5.63 5.63
+
+<<<======   TERMINATED BY THE KEY "Control+C"  ==================>>>
+
+iemd@HPWS[270]# ls
+Makefile       ext.o          main.o         prototypes.h   real.o
+Makefile.X     files.c        md*            pt.c           rv.c
+Makefile.noX   files.o        md.h           pt.o           rv.o
+control.c      init.c         msd.c          rcprcl.c       xsrc/
+control.o      init.o         msd.o          rcprcl.o
+ext.c          main.c         potential.h    real.c
+
+iemd@HPWS[271]# make clean
+     rm -f main.o ext.o pt.o control.o init.o files.o real.o rcprcl.o rv.o 
+msd.o *~ "#"* *.ln ./xsrc/*~ ./xsrc/"#"* ./xsrc/*.ln
+
+iemd@HPWS[272]# ls
+Makefile       ext.c          md*            prototypes.h   rv.c
+Makefile.X     files.c        md.h           pt.c           xsrc/
+Makefile.noX   init.c         msd.c          rcprcl.c
+control.c      main.c         potential.h    real.c
+
+iemd@HPWS[273]# rm md
+md: ? (y/n) y
+iemd@HPWS[274]# ls
+Makefile       ext.c          md.h           pt.c           xsrc/
+Makefile.X     files.c        msd.c          rcprcl.c
+Makefile.noX   init.c         potential.h    real.c
+control.c      main.c         prototypes.h   rv.c
+
+========================================================================
+[2] How to make the IEMD with real-time X window interface
+========================================================================
+iemd@HPWS[275]# make -f Makefile.X clean
+iemd@HPWS[276]# make -f Makefile.X
+
+nisidate@dragon\[263]# make -f Makefile.X
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD main.c -o main.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ext.c -o ext.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD pt.c -o pt.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD control.c -o control.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD init.c -o init.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD files.c -o files.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD real.c -o real.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD rcprcl.c -o rcprcl.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD rv.c -o rv.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD msd.c -o msd.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xdmain.c -o ./xsrc/xdmain.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xdinit.c -o ./xsrc/xdinit.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xdicon.c -o ./xsrc/xdicon.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xhist.c -o ./xsrc/xhist.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xmsd.c -o ./xsrc/xmsd.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xnet.c -o ./xsrc/xnet.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/network.c -o ./xsrc/network.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xunit.c -o ./xsrc/xunit.o 
+	cc  -c -Aa +O3  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include -DXD ./xsrc/xmycolor.c -o ./xsrc/xmycolor.o 
+	cc  -Aa +O3  -DXD -o md  main.o ext.o pt.o control.o init.o files.o real.o rcprcl.o rv.o msd.o ./xsrc/xdmain.o ./xsrc/xdinit.o ./xsrc/xdicon.o ./xsrc/xhist.o ./xsrc/xmsd.o ./xsrc/xnet.o ./xsrc/network.o ./xsrc/xunit.o ./xsrc/xmycolor.o  -lm -L/usr/lib -L/usr/X11R6/lib -L/usr/lib/X11R5 -lX11
+
+iemd@HPWS[277]# md
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+     1 7.57 -810.97 -803.40  303.64  0.090   5.63 5.63 5.63
+     2 7.41 -810.50 -803.10  297.00  0.087   5.63 5.63 5.63
+     3 7.01 -810.17 -803.16  280.93  0.239   5.63 5.63 5.63
+     4 6.44 -809.34 -802.90  258.10  0.365   5.63 5.63 5.63
+     5 5.72 -808.69 -802.98  229.25  0.499   5.63 5.63 5.63
+     6 4.90 -806.66 -801.76  196.50  0.632   5.63 5.63 5.63
+     7 4.05 -805.83 -801.77  162.49  0.767   5.63 5.63 5.63
+     8 3.23 -805.22 -801.99  129.67  0.874   5.63 5.63 5.63
+     9 2.50 -804.50 -802.00  100.38  0.946   5.63 5.63 5.63
+    10 1.92 -803.91 -802.00   76.90  1.009   5.63 5.63 5.63
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+    11 1.51 -803.97 -802.46   60.73  1.019   5.63 5.63 5.63
+    12 1.31 -803.81 -802.50   52.65  0.996   5.63 5.63 5.63
+    13 1.31 -804.12 -802.81   52.57  0.958   5.63 5.63 5.63
+    14 1.49 -804.17 -802.68   59.55  0.896   5.63 5.63 5.63
+    15 1.80 -804.81 -803.01   72.04  0.813   5.63 5.63 5.63
+    16 2.20 -805.21 -803.01   88.14  0.734   5.63 5.63 5.63
+    17 2.64 -805.77 -803.13  105.86  0.654   5.63 5.63 5.63
+    18 3.08 -806.18 -803.11  123.29  0.594   5.63 5.63 5.63
+    19 3.46 -806.28 -802.82  138.84  0.544   5.63 5.63 5.63
+    20 3.78 -806.78 -803.00  151.53  0.497   5.63 5.63 5.63
+  step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+    21 4.02 -806.90 -802.89  161.01  0.481   5.63 5.63 5.63
+    22 4.17 -807.09 -802.91  167.37  0.486   5.63 5.63 5.63
+    23 4.26 -807.03 -802.77  170.84  0.490   5.63 5.63 5.63
+    24 4.28 -807.05 -802.76  171.78  0.499   5.63 5.63 5.63
+    25 4.26 -806.99 -802.73  170.60  0.524   5.63 5.63 5.63
+    26 4.19 -806.81 -802.62  167.79  0.549   5.63 5.63 5.63
+    27 4.09 -806.58 -802.49  163.97  0.573   5.63 5.63 5.63
+
+<<<======   TERMINATED BY THE KEY "Control+C"  ==================>>>
+
+iemd@HPWS[278]# 
+
+========================================================================
+[3] Include files and library files of X window system
+========================================================================
+
+  The default setting of "Makefile.X" is wrote HPUX or FreeBSD;
+
+     ### Include files and library ################################
+     ###  where is the X include file "Xlib.h" and "Xutil.h"?
+     INC=  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include/X11
+     ###  for Sun Ultra1 Model200E (SPARCompiler C 3.0: OpenWindows)
+     # INC=-I/usr/openwin/include
+
+     ###  where is the X library "libX11.a"?
+     LIBS= -lm -L/usr/lib -L/usr/X11R6/lib -L/usr/lib/X11R5 -lX11
+     ###  for Sun Ultra1 Model200E (SPARCompiler C 3.0: OpenWindows)
+     # LIBS= -lm -L/usr/openwin/lib -lX11
+     ##############################################################
+
+
+  For Sun(Ultra1 Model200E: SPARCompiler C 3.0 with OpenWindows), you
+  should edit the "Makefile.X" and change it to;
+
+     ### Include files and library ################################
+     ###  where is the X include file "Xlib.h" and "Xutil.h"?
+     # INC=  -I/usr/include/X11R5 -I/usr/include/X11 -I/usr/X11R6/include/X11
+     ###  for Sun Ultra1 Model200E (SPARCompiler C 3.0: OpenWindows)
+     INC=-I/usr/openwin/include
+
+     ###  where is the X library "libX11.a"?
+     # LIBS= -lm -L/usr/lib -L/usr/X11R6/lib -L/usr/lib/X11R5 -lX11
+     ###  for Sun Ultra1 Model200E (SPARCompiler C 3.0: OpenWindows)
+     LIBS= -lm -L/usr/openwin/lib -lX11
+     ##############################################################
+
+  and also for "Compile command";
+
+     ### Compile command ##########################################
+     ###  for FreeBSD
+     # CC= gcc
+     # CFLAGS=  -fstrength-reduce -O 
+     ###  for HPUX   << "-Aa": compile under ANSI mode [HPUX] >>
+     # CC=cc 
+     # CFLAGS= -Aa +O3 
+     ###  for Sun Ultra1 Model200E (SPARCompiler C 3.0)
+     CC=cc
+     CFLAGS= -Aa -O
+     ##############################################################
+
+  Then type "make -f Makefile.X", and execute the program by typing
+  "md" on your console.
+
+  If you can not compile the IEMD using Makefile.X, the problem should
+  be a PATH setting ("INC" and/or "LIBS"). Please change the PATH
+  setting lines according to your system configuration.
+
+  For more information about this, please consult with super-user of
+  your system.
+
+
+========================================================================
+END.

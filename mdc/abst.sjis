@@ -1,0 +1,102 @@
+
+------------------
+MDC
+　Cで書かれた分子動力学計算コード。
+------------------
+
+目的：
+
+UNIX-OS 上で動作する古典分子動力学法計算（MD）。クーロン力は EWALD 法を
+用いて計算し、粒子速度スケーリングと MD セルサイズスケーリングにより温
+度、圧力（TP-const : K. Kawamura method）をコントロールします。数値積分
+法は、Verlet法（速度形式）、または Gear 法（k=7、F表記）が選択できます。
+ソースコードは通常の C 言語で読みやすく簡潔に記述されています。
+Makefile の指定により、リアルタイムなアニメーションなどの X-Window 表示
+機能を持つ MD プログラムや、キャラクタベースの MD プログラムが自動生成
+されます。
+
+------------------
+
+マニュアル： 
+
+旧版からの拡張・強化した機能などは、パッケージに含まれるファイル 
+RelaseNote.sjis に記載されています。その他についてはディレクトリ 
+manual 以下のファイル群を参照してください。
+
+------------------
+
+使用言語： 
+
+UNIX 上の C 言語(ANSI-C)。
+
+------------------
+
+プログラムサイズ：
+
+コンパクト且つ柔軟なプログラム構成。
+
+------------------
+
+ハードウェア：
+
+UNIX システム。HPUX 及び FreeBSD や Linux、DEC (digital-UNIX) Sunなど
+の各種 C コンバイラに対応しています。デフォルトで GCC コンパイラをター
+ゲットにしています。
+
+------------------
+
+プログラム性能上の制限：
+
+デフォルトで NaCl 系 (BMH potential with Tosi-Fumi set) を実行します。
+他に NaCl 系 (SX1 set: K. Kawamura 1990)、Stillinger Weber potentialに
+よる Si 系 や Abell-Tersoff potential による Si、Ge、C 系（いずれもダ
+イヤモンド構造）、soft-core potential による AgI や CaF2 などの計算が
+可能です。ソースファイルの指定により EWALD 計算に必要なαパラメータ推
+定支援機能などを備えています。また、附属プログラムにて動的構造因子 の
+計算などが可能です。原子種数や構成原子数についての制限はありませんが、
+他の系の 計算には、ソースファイル control.c などを直接変更後、make を
+実行してください。
+
+------------------
+
+移植性：
+
+Makefile の CFLAGS（コンパイルオプション）や INC の記述（パスの設定）
+を変更することで、他機種（UNIX等）へも容易に移植できます。X-Window 対
+応版のコンパイルには、通常のシステムにインストールされているライブラリ 
+libX11.a やヘッダファイル Xlib.h、Xutil.h などが必要です。PC-UNIXの場
+合、デフォルトの make コマンドではなく、gmake の使用を推奨します。
+
+------------------
+
+条件：
+
+特に無し。改善すべき所などありましたら御連絡いただければ幸いです。
+制限も無し。パブリックドメインとして提供します。
+
+------------------
+
+媒体：
+
+ネット配布
+
+------------------
+
+頒布価格：
+
+無料
+
+------------------
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+   Here we release the code MDC.
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+==========================================================================

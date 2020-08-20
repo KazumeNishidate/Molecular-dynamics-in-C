@@ -1,0 +1,397 @@
+(***********************************************************************
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used on any computer system with Mathematica 3.0,
+MathReader 3.0, or any compatible application. The data for the notebook 
+starts with the line of stars above.
+
+To get the notebook into a Mathematica-compatible application, do one of 
+the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing the 
+word CacheID, otherwise Mathematica-compatible applications may try to 
+use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+***********************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     10320,        298]*)
+(*NotebookOutlinePosition[     11254,        328]*)
+(*  CellTagsIndexPosition[     11210,        324]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Molecular structure viewer using Mathematica", "Subtitle",
+  FontSlant->"Italic"],
+
+Cell[TextData[{
+  "REF: \"Development of Molecular visualization Package using ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  "\", K. Nishidate, M. Baba, Y. Kashiwaba and K. Nishikawa, JCPE Journal, \
+Vol.12, No.3, pp221-228 (2000)"
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell["program1", "Subsection"],
+
+Cell[BoxData[
+    \(\(Needs["\<Graphics`Shapes`\>"]; \)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[{
+    \(Clear[CylinderObject, CylinderRadius, bar]\), 
+    \(\(CylinderObject = Cylinder[1, 1, 5]; \)\)}], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(CylinderRadius = 0.1; \n
+    bar = CylinderObject
+         /. {{x_?NumberQ, y_?NumberQ, z_?NumberQ}\  -> \n
+            \ \ \ \ \ \ \ {x*CylinderRadius, y*CylinderRadius, 
+              N[leng*\((z + 1)\)/2]\ \ \ }}; \n\)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[{
+    \(Clear[bond]\), 
+    \(bond[edge1 : {_, _, _, _}, edge2 : {_, _, _, _}] := \n\ \ \ \ 
+      Module[{directionVec, size, unitVec, axis2, rotation, \n
+          \ \ \ \ \ \ \ \ \ \ \ toUnit, zero = 0.000001, one = 1.000001}, \n
+        \ \ \ \ \ \ \ \ \ \ \ a = Drop[edge1, 1]; \n\ \ \ \ \ \ \ \ \ \ \ 
+        b = Drop[edge2, 1]; \n\ \ \ \ \ \ \ \ \ \ \ 
+        size[vec1 : {_, _, _}] := Sqrt[Apply[Plus, vec1^2]]; \n
+        \ \ \ \ \ \ \ \ \ \ \ toUnit[vec2 : {_, _, _}] := vec2/size[vec2]; \n
+        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \n\ \ \ \ \ \ \ \ \ \ \ 
+        directionVec = b - a; \n\ \ \ \ \ \ \ \ \ \ \ 
+        leng = size[directionVec]; \n\ \ \ \ \ \ \ \ \ \ \ 
+        unitVec = directionVec/leng; \n\ \ \ \ \ \ \ \ \ \ \ 
+        axis2 = toUnit[Cross[{zero, one, zero}, unitVec]]; \n\n
+        \ \ \ \ \ \ \ \ \ \ \ 
+        rotation = 
+          \((Transpose[{unitVec, axis2, Cross[unitVec, axis2]}].\n
+              \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{zero, zero, one}, {
+                  zero, one, zero}, {one, zero, zero}})\); \n\n
+        \ \ \ \ \ \ \ \ \ \ \ 
+        \(bar /. 
+              \(({x_?NumberQ, y_?NumberQ, z_?NumberQ} :> \n
+                  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \t\((#.{x, y, z})\) + a)\)&
+            \)[rotation]\n\ \ \ \ ]\)}], "Input",
+  FontSize->9],
+
+Cell[BoxData[{
+    \(Clear[atom]\), 
+    \(\(SphereObject = Sphere[1, 15, 10]; \)\)}], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\(atom[{atomkind_, ax_, ay_, az_}] := \n
+      \ \ \ \ \ \ {\(species[\([atomkind + 1]\)]\)[\([2]\)], 
+        SphereObject /. \n
+          \ \ \ \ \ \ \ \ \ \ \ {{x_?NumberQ, y_?NumberQ, z_?NumberQ} -> \n
+              \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {
+                x*\(species[\([atomkind + 1]\)]\)[\([1]\)] + ax, \n
+                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+                y*\(species[\([atomkind + 1]\)]\)[\([1]\)] + ay, \n
+                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+                z*\(species[\([atomkind + 1]\)]\)[\([1]\)] + az\ \ \ }}\n
+        \ \ \ \ \ \ }; \)\t\t\)\)], "Input",
+  FontSize->9],
+
+Cell["Example: color set 1", "Text"],
+
+Cell[BoxData[
+    \(\(\(species
+       = { (*\ {raidus, \ color}\ *) \n
+         (*\ no.\ 0\ *) \ \t{0.6, SurfaceColor[RGBColor[0.1, 0.2, 0]]}, \n
+         (*\ no.\ 1\ *) \ \t{0.5, SurfaceColor[RGBColor[0.3, 0, 0.6]]}, \n
+         (*\ no.\ 2\ *) \ \t{0.4, SurfaceColor[RGBColor[0.1, 0, 0.8]]}, \n
+         (*\ no.\ 3\ *) \ \t{0.5, SurfaceColor[RGBColor[0.8, 0.1, 0.1]]}, \n
+         (*\ no.\ 4\ *) \ \t{0.5, SurfaceColor[RGBColor[0.6, 0.6, 0.1]]}}; 
+    \)\n\)\)], "Input",
+  FontSize->9],
+
+Cell["Example: color set 2", "Text"],
+
+Cell[BoxData[
+    \(\(species
+       = { (*\ {raidus, \ color}\ *) \n
+         (*\ no.\ 0\ *) \ \t{0.4, SurfaceColor[Hue[0.2]]}, \n
+         (*\ no.\ 1\ *) \ \t{0.5, SurfaceColor[Hue[0.1]]}, \n
+         (*\ no.\ 2\ *) \ \t{0.4, SurfaceColor[Hue[0.4]]}, \n
+         (*\ no.\ 3\ *) \ \t{0.5, SurfaceColor[Hue[0.7]]}, \n
+         (*\ no.\ 4\ *) \ \t{0.5, SurfaceColor[Hue[0.9]]}}; \)\)], "Input",
+  FontSize->9],
+
+Cell["Example: virtual molecule graphics.", "Text"],
+
+Cell[BoxData[
+    \(\(pt
+       = {{0, 0, 0, 0}, {0, 0, 0, 2.5}, {1, 0, 3, 3}, {2, 3, 3, 3}, {3, 3, 0, 
+          3}}; \)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(Show[
+      Graphics3D[{EdgeForm[\ ], \n\ \ \ \ \ \ \ \ \ \ \ 
+          bond[pt[\([1]\)], pt[\([2]\)]], \n\ \ \ \ \ \ \ \ \ \ \ 
+          bond[pt[\([2]\)], pt[\([3]\)]], \n\ \ \ \ \ \ \ \ \ \ \ 
+          bond[pt[\([3]\)], pt[\([4]\)]], \n\ \ \ \ \ \ \ \ \ \ \ 
+          bond[pt[\([4]\)], pt[\([5]\)]], \n\ \ \ \ \ \ \ \ \ \ \ 
+          atom[pt[\([1]\)]], \n\ \ \ \ \ \ \ \ \ \ \ atom[pt[\([2]\)]], \n
+          \ \ \ \ \ \ \ \ \ \ \ atom[pt[\([3]\)]], \n\ \ \ \ \ \ \ \ \ \ \ 
+          atom[pt[\([4]\)]], \n\ \ \ \ \ \ \ \ \ \ \ atom[pt[\([5]\)]]\ \ \n
+          \ \ \ \ \ \ \ \ \ }], \n\ \ \ Axes -> True, Boxed -> False, 
+      PlotRange -> All]\)], "Input",
+  FontSize->9]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["setting up the directory where the file \"c60cds\" is saved.", 
+  "Subsection"],
+
+Cell["Check and change the directory where the file is saved.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Directory[]\)], "Input"],
+
+Cell[BoxData[
+    \("MacintoshHD:appl:Mathematica 3.0 Files"\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(SetDirectory["\<MacintoshHD:\>"]\)], "Input"],
+
+Cell[BoxData[
+    \("MacintoshHD:"\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+    \(tes2 = ReadList["\<c60cds\>", {Number, Number, Number, Number}]\)], 
+  "Input",
+  FontSize->9],
+
+Cell["\<\
+The file \"c60cds\" is the numerical position data ([A] unit) of \
+carbon atoms of a C60 molecule written in the MD program IEMD2 output format \
+(\"files/positions\"). See \"manual/manual.IEMD\".\
+\>", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["example", "Subsection"],
+
+Cell[BoxData[{
+    \(Clear[searchBond]\), 
+    \(searchBond[MaxLength_, lis_List] := 
+      Module[\n\ \ \ \ \ {a, b, num, dr2, bondlis}, \n\n\ \ \ \ \ 
+        bondlis = {}; \n\ \ \ \ \ MaxLength2 = MaxLength^2; \n\ \ \ \ \ 
+        cds = lis /. {{atom_, x_, y_, z_} -> {x, y, z}}; \n\ \ \ \ \ 
+        num = Length[cds]; \n\t\t\n\ \ \ \ \ 
+        Table[a = cds[\([i]\)]; b = cds[\([j]\)]; \ 
+          dr2 = Apply[Plus, \((a - b)\)^2]; \n\ \ \ \ \ \ \ \ \ \ \ 
+          If[dr2 < MaxLength2, 
+            AppendTo[bondlis, {lis[\([i]\)], lis[\([j]\)]}]], \n
+          \ \ \ \ \ \ \ \ \ \ {i, 1, num}, {j, i + 1, num}]; \n\ \ \ \ \ 
+        bondlis\n\ \ \ \ ]\)}], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ \(bondlist = searchBond[2, tes2]; \)\)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ bondObjects = Map[bond[#[\([1]\)], #[\([2]\)]]&, bondlist]; \n\ \ \ 
+    atomObjects = Map[atom[#]&, tes2\ ]; \)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(Show[Graphics3D[{EdgeForm[\ ], atomObjects, bondObjects\ }]]\)], "Input",\
+
+  FontSize->9],
+
+Cell[BoxData[{
+    \(Clear[cutoff]\), 
+    \(\ \ \ 
+    cutoff[xmin_, xmax_, ymin_, ymax_, zmin_, zmax_, lis_List] := \n
+      \ \ \ \ \ \ 
+      Module[{atom, x, y, z, lisCut = {}}, \n\ \ \ \ \ \ \ \ \ 
+        Table[\ atom = \(lis[\([i]\)]\)[\([1]\)]; \n
+          \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x = \(lis[\([i]\)]\)[\([2]\)]; \ 
+          y = \(lis[\([i]\)]\)[\([3]\)]; \ z = \(lis[\([i]\)]\)[\([4]\)]; \n
+          \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+          If[\((x > xmin && x < xmax)\) && \((y > ymin && y < ymax)\) && 
+              \((z > zmin && z < zmax)\), \n
+            \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+            AppendTo[lisCut, {atom, x, y, z}]], \n
+          \ \ \ \ \ \ \ \ \ {i, 1, Length[lis]}]; \n\ \ \ \ lisCut\n\ \ \ ]\n
+    \)}], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ \ \ \(tes3 = cutoff[0, 10, 0, 10, 0, 10, tes2]; \)\)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ \ \ bondlist = searchBond[2, tes3]; \n\ \ \ 
+    bondObjects = Map[bond[#[\([1]\)], #[\([2]\)]]&, bondlist]; \n\ \ \ 
+    atomObjects = Map[atom[#]&, tes3\ ]; \)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ \ \ 
+    Show[Graphics3D[{EdgeForm[\ ], \n\ \ \ \ \ \ \ \ \ bondObjects, 
+          atomObjects\ }], \n\ \ \ \ \ \ \ \ \ Axes -> True, 
+      PlotRange -> All, \ ViewPoint -> {10, 10, 10}]\)\)], "Input",
+  FontSize->9],
+
+Cell[BoxData[
+    \(\(\ \ \ 
+    gr1\  = \ Show[Graphics3D[{EdgeForm[\ ], atomObjects, bondObjects\ }]]
+        \)\)], "Input",
+  FontSize->9]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["save the graphics in GIF format", "Subsection"],
+
+Cell[BoxData[
+    \(\(\ \ \ Display["\<plot1.gif\>", gr1, "\<GIF\>"]\n\)\)], "Input",
+  FontSize->9]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"Macintosh 3.0",
+ScreenRectangle->{{0, 1152}, {0, 850}},
+ScreenStyleEnvironment->"Presentation",
+WindowSize->{791, 746},
+WindowMargins->{{4, Automatic}, {Automatic, -2}},
+Magnification->1.5,
+StyleDefinitions -> "Classic.nb",
+MacintoshSystemPageSetup->"\<\
+00@0001804P000000`d26_oRon@3:`8fhT85N`?N0080004/0B`000003;T8^`01
+0000I00000800@4100800BL?00400@0000000000000000@201T1T000003h4@0Q
+224<0A0Q504000000000000000000000\>"
+]
+
+
+(***********************************************************************
+Cached data follows.  If you edit this Notebook file directly, not using
+Mathematica, you must remove the line containing CacheID at the top of 
+the file.  The cache data will then be recreated when you save this file 
+from within Mathematica.
+***********************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1731, 51, 87, 1, 76, "Subtitle"],
+Cell[1821, 54, 254, 6, 63, "Text"],
+
+Cell[CellGroupData[{
+Cell[2100, 64, 30, 0, 37, "Subsection"],
+Cell[2133, 66, 83, 2, 47, "Input"],
+Cell[2219, 70, 143, 3, 64, "Input"],
+Cell[2365, 75, 271, 6, 99, "Input"],
+Cell[2639, 83, 1333, 24, 380, "Input"],
+Cell[3975, 109, 110, 3, 64, "Input"],
+Cell[4088, 114, 641, 12, 152, "Input"],
+Cell[4732, 128, 36, 0, 40, "Text"],
+Cell[4771, 130, 488, 9, 152, "Input"],
+Cell[5262, 141, 36, 0, 40, "Text"],
+Cell[5301, 143, 408, 8, 134, "Input"],
+Cell[5712, 153, 51, 0, 40, "Text"],
+Cell[5766, 155, 149, 4, 47, "Input"],
+Cell[5918, 161, 701, 12, 239, "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[6656, 178, 85, 1, 37, "Subsection"],
+Cell[6744, 181, 71, 0, 40, "Text"],
+
+Cell[CellGroupData[{
+Cell[6840, 185, 44, 1, 47, "Input"],
+Cell[6887, 188, 74, 1, 41, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[6998, 194, 65, 1, 47, "Input"],
+Cell[7066, 197, 48, 1, 41, "Output"]
+}, Open  ]],
+Cell[7129, 201, 114, 3, 47, "Input"],
+Cell[7246, 206, 220, 4, 85, "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7503, 215, 29, 0, 37, "Subsection"],
+Cell[7535, 217, 690, 13, 275, "Input"],
+Cell[8228, 232, 90, 2, 47, "Input"],
+Cell[8321, 236, 164, 3, 64, "Input"],
+Cell[8488, 241, 110, 3, 47, "Input"],
+Cell[8601, 246, 785, 16, 239, "Input"],
+Cell[9389, 264, 104, 2, 47, "Input"],
+Cell[9496, 268, 213, 4, 82, "Input"],
+Cell[9712, 274, 242, 5, 82, "Input"],
+Cell[9957, 281, 142, 4, 47, "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[10136, 290, 53, 0, 37, "Subsection"],
+Cell[10192, 292, 100, 2, 64, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+
+(***********************************************************************
+End of Mathematica Notebook file.
+***********************************************************************)
+

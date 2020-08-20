@@ -1,0 +1,65 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package             - IEMD2 - 
+==========================================================================
+
+* examples of Makefile
+
+   Makefile.noX.BSD  ---  Makefile for FreeBSD (gcc)
+   Makefile.X.BSD    ---  Makefile for FreeBSD with X-Window interface
+
+   Makefile.noX.HP   ---  Makefile for HPUX (cc)
+   Makefile.X.HP     ---  Makefile for HPUX with X-Window interface
+
+   Makefile.noX.Sun  ---  Makefile for Sun (SPARCompiler C 3.0)
+   Makefile.X.Sun    ---  Makefile for Sun with X-Window (OpenWindows)
+
+   Makefile.X.DEC    ---  Makefile for DEC (Digital UNIX T4.0D-3 Rev.778.1)
+   Makefile.noX.DEC  ---  Makefile for DEC with X-Window (Digital UNIX)
+
+*  To make a IEMD for a <<machine; HP, BSD, Sun>>, you can copy a
+   example Makefile "Makefile.noX.<<machine>>" or
+   "Makefile.X.<<machine>>" to the "program" directory as "Makefile",
+   and type "make" at the directory. See also "manual/how2make.IEMD".
+
+NOTE: ******************************************************************
+   The default Makefile is Makefile.noX.BSD and Makefile.X.BSD.  The
+   target OS is FreeBSD or Linux with gcc. We used the gcc
+   (egcs-2.91.66) of Linux to check the program. Othe makefiles for
+   DEC, SUN, or HP are NOT tightly tested (yet)!  ;-)
+************************************************************************
+
+  Following is a HPUX execution log. (sample):
+
+========================================================================
+iemd@HPWS[431]# pwd
+/user/iemd/batch
+iemd@HPWS[432]# ls
+Makefile.X.BSD     Makefile.X.Sun     Makefile.noX.HP    readme
+Makefile.X.HP      Makefile.noX.BSD   Makefile.noX.Sun
+iemd@HPWS[433]# cp ./Makefile.noX.HP ../program/Makefile
+iemd@HPWS[434]# cd ../program
+iemd@HPWS[435]# ls
+Makefile       ext.c          md.h           pt.c           xsrc/
+Makefile.X     files.c        msd.c          rcprcl.c
+Makefile.noX   init.c         potential.h    real.c
+control.c      main.c         prototypes.h   rv.c
+
+iemd@HPWS[436]# make
+     cc -c -Aa +O3   main.c -o main.o
+     cc -c -Aa +O3   ext.c -o ext.o
+     cc -c -Aa +O3   pt.c -o pt.o
+     cc -c -Aa +O3   control.c -o control.o
+     cc -c -Aa +O3   init.c -o init.o
+     cc -c -Aa +O3   files.c -o files.o
+     cc -c -Aa +O3   real.c -o real.o
+     cc -c -Aa +O3   rcprcl.c -o rcprcl.o
+     cc -c -Aa +O3   rv.c -o rv.o
+     cc -c -Aa +O3   msd.c -o msd.o
+     cc -Aa +O3   -o md  main.o ext.o pt.o control.o init.o files.o real.o rc
+prcl.o rv.o msd.o -lm
+
+iemd@HPWS[437]# md
+
+========================================================================
+========================================================================
+END.

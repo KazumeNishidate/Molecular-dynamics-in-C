@@ -1,0 +1,218 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+
+
+   Here we release the code MDC.
+
+
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+
+Below is the note for the old version and presented here just for the
+reference purpose.
+==================================================================
+
+ MDC quick start
+
+=======  詳細は manual ディレクトリ以下のファイル群を参照  =======
+
+[1] プログラムの make
+
+    ==================================================================
+    ==================================================================
+    デフォルトの Makefileは、gcc搭載のFreeBSDまたはLinuxです。他のシス
+    テム用のMakefileは動作テストしていません。
+    ==================================================================
+    ==================================================================
+
+   program/ ディレクトリにて、make コマンドを実行。
+
+   make コマンドは、program/ ディレクトリ以下のファイル Makefile に基
+   づき、コンパイル作業をします。
+
+   HPUX, DEC, LINUX, FreeBSD 用の X Window 対応版 Makefile 、およびテ
+   キスト版 Makefile は batch/ ディレクトリにあります。
+
+  1) X-Window 版コードの作成
+
+     program ディレクトリにて、
+     cp ../batch/Makefile.X.BSD ./Makefile 
+     を実行。
+
+     program ディレクトリにて、
+      make
+     を実行。
+
+     program ディレクトリにて、
+      ./md
+     を実行。
+
+
+  2) テキスト版プログラムの生成は、
+       cp ../batch/Makefile.noX.XXX ./Makefile
+
+   を実行し、Makefile.noX.XXXをMakefileとしてセーブ後、programディレク
+   トリにて
+   make
+   を実行。./md にて計算が始まります。
+
+
+[2] msd の計算とファイル出力
+
+    デフォルトで原子種毎に自動計算。main.c の関数 newton() で、
+    print_to_file();
+    を呼ぶと、"files/out"に自動的に書き込まれます。
+    ＃ print_to_file() は files.cに定義
+
+[2-1] データの表示
+
+     display1()  : 通常の表示
+     display2()  : MSD の部分を行を変えて縦に表示
+     no_display()  : コメントが一切無しの数値だけの表示
+
+     newton() 関数で、上記のいずれかを選ぶことにより、MD計算表示が
+     変更できます。これらの関数は files.c に定義されています。
+
+[3] スナップショットの保存とTeX原稿などへの張り付け。
+
+    フリーのスナップショット生成プログラム （xgrab など多数あります）
+    を利用するか、xv を使ってスナップショット生成ができます。スナップ
+    ショット生成後、TGIF+ などの GIF 画像加工ソフト（フリーのUNIXソフ
+    ト）や、Macintosh、Windowsへ持っていって、Photochop で加工してから
+    再び UNIX へ持っていくこともできます。
+
+[4] αパラメータの推定
+
+    main.c の
+    /* calc_alpha(); */
+    のコメントを取り、
+     calc_alpha(); 
+    と変更し、make (DECでは make md)。
+
+    生成されたプログラム md を実行すると標準出力に  
+      alpha-parameter  VS. total-potential
+    の数列を出力するので、
+      md > out
+
+    などとして、 UNIX のリダイレクション”> ”を使ってファイル out に
+    標準出力を保存し、このファイル out をプロットする。
+
+    横軸は alpha パラメータ ととり、縦軸にポテンシャルを取ると、一部ほ
+    ぼ水平な部分が現れる。ここが適切な alpha パラメータの値と推定でき
+    る。
+
+    control.c の 
+     alpha = 0.20;
+
+    の値を適切な alpha の値に変更し、main.cのcalc_alpha()をコメントし
+    てからmake する。経験的には、5/Lmax (L = max MD cell size)程度以下。
+
+    数列ファイルのプロットには、UNIXであれば、フリーソフトの gnuplot 
+    や、xplot などが使えます。テキストファイルなので、Mac や Windows 
+    に持っていってプロットすることもできます。
+
+    出力されたデータは反発ポテンシャルも含みます。クーロンポテンシャル
+    だけの変化を見たい場合、control.c の void mk_table(void) 関数で、
+    以下の記述
+       sys.pe1r1[ij*(sys.table_division+1)+ddr] = p_e1 + p_r1;
+    を
+       sys.pe1r1[ij*(sys.table_division+1)+ddr] = p_e1;
+    に変更してください。alphaパラメータ推定計算終了後、忘れずに元にも
+    どしましょう。
+
+    AgIの計算の calc_alpha の場合、そのままでは FLAT 領域が現れません。
+    これは、同等な複数の Ag が存在できる場所からランダムに選択して Ag 
+    を適当に初期配置するためです。alpha推定の場合、例えば、”Agの初期
+    配置をユニットセルの(100)面のある場所”に固定して calc_alpha() を
+    計算することでFLAT 領域が得られると思います。初期配置を定義する 
+    control.c の set_roc()関数を参照してください。
+
+    （注）EWALD の計算ではクーロン力は、本来、alpha パラメータの値によ
+          らないべきなのですが、実空間項を有限でカットすることによる収
+          束精度が関わってきます。したがって、（１）MDボックスサイズを
+          変更した場合（力のカットオフ距離を変更した場合）、（２）また
+          逆格子ベクトルの数 sys.hm を変更した場合、（３）圧力制御MDで
+          MDセルサイズが大幅に変わった場合などは、再度 alpha を調節す
+          ることをお勧めします。
+
+[5] 動的構造因子 S(q,w)の計算
+
+   main.c ファイルの r_position(); 関数を有効にし、各タイムステップに
+   おけるすべての粒子の位置を files/positions に保存。その後、このファ
+   イルpositions の相関関数のFFTをとることにより、動的構造因子 S(q,w)
+   が計算される。
+
+   NaCl (Huggins-Mayerポテンシャル)用の動的構造因子 S(q,w)の計算サンプ
+   ルプログラムは、dynamics/ 以下にあるので、
+
+  (i) NaCl (Huggins-Mayerポテンシャル) の計算に必要なソースファイルを 
+      program/ ディレクトリで、
+
+      cp ../samples/NaCl.hm/* ./
+
+     としてprogramディレクトリコピーし、main.c の r_position(); 関数を
+     有効にし
+
+     make
+
+     を実行（DECでは make md）。
+
+  (ii) dynamics/S_k_w ディレクトリにて、make して動的構造因子計算プロ
+      グラムを生成。MD計算終了後、この動的構造因子計算プログラムを実行
+      すれば、files/positions の位置データファイルを読み込み、相関関数
+      FFTを計算し、S(q,w)を計算します。
+
+      - 正負イオンの相関関数 S(q,w)_{+-}の正確な定義
+        (ρ+) x (ρ-)の明らかな展開定義式が不明のため、 S(q,w)_{+-}
+        の計算に関してはバグの可能性があります。その他、S(q,w)_{++}
+        S(q,w)_{--}、S(q,w)_{質量、質量}については正確に計算します。
+        S(q,w)_{+-}の展開式に関する情報希望。
+
+逆格子ベクトル q や各種条件の変更には、dynamics以下のcontrol.cファイル
+を直接変更してmake後、実行する。
+
+   # Velocity Auto-correlation Function (VAF) の計算には、dynamics/VAF
+     を使用して下さい。
+
+[6] 圧力制御と温度制御
+
+強制スケーリング法です。平衡状態で、他の温度・圧力制御法と同一の計算結
+果（動的構造因子など）を与えます。詳細についてはマニュアルを参照くださ
+い。
+
+[7] 数値積分式
+
+デフォルトはベレーの速度形式。ギアー法も選べます。main.cの関数newton()
+で、
+
+    /* time integration [select one of the following 2 methods] */
+    next_rv_verlet(); 
+    /* next_rv_gear(); */
+
+となっていますが、これはベレーの速度形式で数値積分を実行することを示し
+ています。ギアー法 （k = 7、 F 表記 ）の場合は、
+
+    /* time integration [select one of the following 2 methods] */
+    /* next_rv_verlet(); */
+    next_rv_gear();
+
+とします。マニュアル 参照。
+
+[8] 他の系の計算
+
+他の系の計算には examplesディレクトリを参照ください。この中のサブディ
+レクトリ（例：SW.Si）のファイルを全て program にコピーして make すれば、
+その系の計算ができます。各モデル系のリファレンスは note ファイルに簡単
+に書かれています。
+
+=======  詳細は manual ディレクトリ以下のファイル群を参照  =======
+
+END.
+

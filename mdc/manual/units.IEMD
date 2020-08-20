@@ -1,0 +1,191 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+
+   Here we release the code MDC.
+
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+
+
+
+Below is the note for the old version and presented here just for the
+reference purpose.
+==========================================================================
+Classical Molecular Dynamics Simulation Package Copyright (C) 2000
+IEMD project team [TEAM IEMD].
+==========================================================================
+**********************************************************************
+physical UNIT system in IEMD
+**********************************************************************
+
+   In IEMD, every [unit] of physical value will be converted to a MD
+   calculational unit. 
+
+   Contents:
+      * MD calculational unit
+      * Second unit conversion
+      * Pressure unit conversion
+      * Physical constants
+      * Coulomb force
+      * Energy unit conversion
+
+   See also "program/init.c", "program/control.c", and "program/md.h".
+
+<< MD calculational unit >>---------------------------------------------
+
+   [mass]        =>  1.6605402 x 10^{-27}  [Kg]:  atomic mass unit [m_u] 
+   [length]      =>  1 x 10^{-10} [m] = 1 [A]                                
+   [second']     =>  4.07497263794 x 10^{-15} [s]                          
+   [energy]      =>  1 x 10^{-18} [J]                                        
+   [temperature] =>  1 [K]                                                 
+   [pressure]    =>  1000 [Giga Pascal] = 1 [Tera Pascal]
+
+<< Second unit conversion >>--------------------------------------------
+
+  [J] = [N][m] = [kg][m^2]/[s^2]
+
+  [s^2] = [kg][m^2]/[J]
+
+        = {1/{1.6605402 * 10^{-27}}} * 10^{20} / 10^{18} 
+
+                                         [ [mass][length^2]/[energy] ]
+
+        = {1/{1.6605402 * 10^{-27}}} * 10^{20} / 10^{18} 
+
+                                                       [ [second']^2 ]
+
+  [second'] = 
+
+     In[1]:= Sqrt[ 1/{ {1/{1.6605402 * 10^{-27}}} * 10^{20} / 10^{18} }]
+
+                           -15
+     Out[1]= {{{{4.07497 10   }}}}
+     
+     In[2]:= N[%,20]
+     
+                                     -15
+     Out[2]= {{{{4.074972637944947 10   }}}}  [s]
+
+           = 4.074972637944947 [fs]
+
+<< Pressure unit conversion >>------------------------------------------
+
+   [standard atmosphere] = 760 [mmHg] = 101325 [Pa]                      
+                         = 1.01325 x 10^{-4} [GPa]                        
+                                                                         
+   1 [Pa] = [N]/[m^2],  [N] = [kg][m]/[s^2]                              
+   1 [Pa] = ( 4.074972637944947^{2}/1.6605402 )                                
+                x 10^{-13}   [mass]/([second'^{2}][length])              
+                                                                         
+   where, 1 [mass]/([second'^{2}][length]) = 1 [Pa'],                     
+   and [Giga] = 10^{9}, [Tera] = 10^{12}.                                
+
+                    1.6605402                                               
+   1 [Pa'] = ------------------------ x 10^{4}  [GPa]                          
+               4.074972637944947^{2}                                           
+                    1.6605402                                               
+           = ------------------------ x 10000  [GPa]
+               4.074972637944947^{2}                                           
+
+           = (1.6605402 * 10000)/(4.074972637944947^{2})  [GPa]
+
+           = (1.6605402 * 10000)/(4.074972637944947^{2})  [GPa]
+
+           = (1.6605402 * 10000)/(4.074972637944947^{2})  [GPa] 
+
+           = {1000.}  [GPa] 
+
+           = N[%,20]  [GPa] 
+
+           = {1000.}  [GPa] 
+
+           =  1.  [TPa]
+
+  [GPa] -> [Pa'] unit converter;
+   (see "get_control_param()" in "program/control.c")
+
+     press_unit_conversion = 1.0/( (1.6605402*10000.0)/
+                              ((4.074972637944947)*(4.074972637944947)));
+                           = 1/sys.pp2gpa
+
+  [Pa'] -> [GPa] unit converter;
+     sys.pp2gpa = (1.6605402*10000.0)/
+                     ((4.074972637944947)*(4.074972637944947));
+
+<< Physical constants >>------------------------------------------------
+
+   * Boltzmann constant                                                    
+        kB  = 1.380658e-23  [J/K]                                        
+            => 1.380658e-5  [energy/temperature]                         
+   * Elementally charge                                                    
+        e   =  1.60217733e-19  [C]                                       
+            => 1.0 (included in sqrt(sys.kk))                            
+
+<< Coulomb force >>----------------------------------------------------
+
+    * Dielectric constant in vacuum                                         
+        epsilon0 = 8.854187817e-12 [F/m]                                  
+                 = 8.854187817e-21 [C^2/(dyne cm^2)]                     
+
+    * [C^2]/[F] = [J]
+                                                                         
+           1               e^2  Zi Zj  [C^2]                             
+   U = --------------  --------------------------                        
+       4 Pi Eps [F/m]    r [A] x 10^{-10}  [m]                           
+                                                                         
+         e^2        Zi Zj       [C^2]                                    
+     = --------- ------------- -------                                   
+       4 Pi Eps    r 10^{-10}    [F]                                     
+                                                                         
+                     Zi Zj                                               
+     = 2.307079556 ---------  [energy]                                   
+                      r                                                  
+                                                                         
+  In:=(1.60217733*10^(-19))^2*10^(18)/(4Pi 8.854187817*10^(-12)*10^(-10))  
+
+       7.2479                                                              
+  Out= ------                                                              
+         Pi                                                                
+
+  In:= N[%,10]                                                             
+
+  Out= 2.307079556                                                         
+
+  sys.kk = 1/(4Pi*Epsiron) [m/F]  <MKS-unit>
+         = 1 [cm*erg/(stat.C^2)]  <cgs-unit>
+
+  See also "program/rcprcl.c" and "program/real.c".
+
+<< Energy unit conversion >>--------------------------------------------
+
+   [energy] -> [energy][mol^{-1}] -> [J][mol^{-1}]                       
+    N_A [avogadro constant] = 6.0221367 x 10^{23}                          
+                            = 6.0221367e5 [in IEMD unit] 
+                                                                         
+   [energy] = 10^{-18} [J]                                               
+   [energy][mol^{-1}] = 10^{-18} x 6.0221367 x 10^{23} [J][mol^{-1}]     
+                      = 6.0221367 x 10^{23-18} [J][mol^{-1}]             
+                      = 6.0221367 x 10^{5} [J][mol^{-1}]                 
+                                                                         
+   In NaCl crystal system, there are two atoms per one unit cell.  In    
+   this case, the total number of NaCl unit (= avogadro unit = Mol. unit) 
+   in the system is [sys.N/2].
+
+  [energy] -> [J][mol^{-1}]  unit conversion 
+  sys.perMol = AVOGADRO/((double)(sys.N/ctl.natoms_in_mol_unit)); 
+  * AVOGADRO = 6.0221367e5 [in IEMD unit] 
+
+  [energy] -> [temperature] = [K]                         
+   sys.e2t = 2.0 / (3.0 * (double)(sys.N) * sys.kB);
+
+--------------------------------------------------------------------------
+=============================================================================
+END.
+

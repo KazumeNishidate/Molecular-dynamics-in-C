@@ -1,0 +1,17 @@
+NaCl crystal with SX1 potentail set.
+
+---------------------------------------------------------------------------
+dt = 3.0 [fs]
+system size = 3 x 3 x 3
+alpha = 0.3 [A^(-1)]
+cut off = 8.0 [A]
+---------------------------------------------------------------------------
+REF.: 
+
+[1] Katsuyuki Kawamura, "PASOKON BUNSHI SIMULATION", (Japanese),
+    KAIBUNDO, (1990).
+
+[2] Katsuyuki Kawamura, Solid State Physics (KOTAIBUTSURI: Japanese),
+    Vol. 29, No. 12, 909 (1994).
+---------------------------------------------------------------------------
+

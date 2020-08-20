@@ -1,0 +1,15 @@
+Silicon (diamond structure) with Stillinger Weber potential.
+
+dt = 0.38317 [fs]
+system size = 3x3x3
+
+The valiable "sys.a1" in get_control_param() of control.c was set to
+0.0 to SKIP the EWALD calculation.
+
+Note that the 3-body contribution to VIRIAL is not considered.
+
+REF.: F. H. Stillinger and T. A. Weber, "Computer simulation of local
+order in condensed phases of silicon", Phys. Rev. B., Vol. 31, No. 8,
+5262 (1985)
+
+

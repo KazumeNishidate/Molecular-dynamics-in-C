@@ -1,0 +1,1035 @@
+==========================================================================
+   Classical Molecular Dynamics Simulation Package  - MDC -
+==========================================================================
+
+
+   Here we release the code MDC.
+
+
+   The MDC is the classical molecular dynamics code written by C. The
+   code was originally developed by us for research purposes. 
+
+   The code is now released to the public domain and may be used in
+   any project for free with no restrictions.  ;-)
+
+
+                                               K. Nishidate
+
+Below is the note for the old version and presented here just for the
+reference purpose.
+==========================================================================
+   Classical Molecular Dynamics Simulation Package 
+==========================================================================
+
+Contents:
+   * brief overview
+   * FILE system
+   * Option Switch description
+   * X-window interface option switch
+   * References
+   * Appendix
+
+* brief overview of the IEMD:
+--------------------------------------------------------------------------
+
+     The principle of the classical molecular-dynamics (MD)
+  calculations is based upon a numerical integration of the Newtonian
+  equation of motion for atoms.
+
+  The integration of Verlet's velocity form can be written as,
+
+    r_{i}^{n+1} = r_{i}^{n} + h v_{i}^{n} + (1/(2m)) h^2 F_{i}^{n},
+
+    v_{i}^{n+1} = v_{i}^{n} + (1/(2m)) h (F_{i}^{n+1} + F_{i}^{n}),
+
+  where "h" is a time-increment step, delta-t, r_{i}^{n} is a position
+  of atom "i", v_{i}^{n} is a velocity of the atom at the "n" time
+  step.
+
+  note: Gear's method can also be applied [see the section [4]].
+
+  Temperature and pressure are simply regulated by the forced scaling
+  method. The velocities v_{i} are adjusted at every
+  "ctl.t_control_step" steps ("ctl.t_control_step*delta_time_ps" [fs])
+  to maintain the temperature, while the basic MD cell dimensions
+  L_{alpha} (alpha = x, y, z) are adjusted at every
+  "ctl.p_control_step" steps ("ctl.p_control_step*delta_time_ps" [fs])
+  so as to balance the internal pressure tensor with the external
+  prescribed pressure tensor {set_press_GPa_X, set_press_GPa_Y,
+  set_press_GPa_Z} (Kawamura's method, or extended Andersen
+  method). 
+
+
+* FILE system of IEMD package:
+--------------------------------------------------------------------------
+  IEMD/
+     manual/
+       readme.1st
+       how2make.IEMD - description of how to make the code
+       manual.IEMD   - this file
+       units.IEMD    - physical UNIT system 
+
+     program/
+       Source files with detailed comment lines.
+
+     batch/
+       examples of "Makefile" for HP, FreeBSD/Linux, and Sun OSs.
+
+     files/
+       input "data (not yet supported)" and output "positions" files
+
+     examples/
+       example data setting files for several crystal systems
+
+     dynamics/S_k_w
+       dynamical structure factor calculation [beta version]
+
+
+* Option Switch description:
+--------------------------------------------------------------------------
+
+[1] The default "program/Makefile" is written for FreeBSD of Linux
+    systems. To make the executable object, just type "make" in the
+    "program" directory, and execute the code by typing "./md".
+
+[4] The default setting is specific to NaCl crystal system (containing
+    3 X 3 X 3 = 27 unit cells) with BHM potential with Tosi-Fumi set
+    (see "program/control.c" and "program/init.c"). To change the
+    model parameters, you can directory edit the source files.
+
+    - The function "get_control_param()" in "program/control.c"
+      defines specific control parameters for the calculation.
+
+   /*-----------------------------------------------------------------*/
+    ctl.calc_max = 10000;  /* maximum MD time step                     */
+    delta_time_fs = 3.0;   /* 1 [fs] = 0.001 [ps] = 1.0 X 10^(-15) [s] */
+  
+    ctl.temp = 300.0;       /* Temperature setting [K] */
+    ctl.t_control_step = 5;
+    set_press_GPa_X = 1.0;  /* Pressure setting  [GPa] */
+    set_press_GPa_Y = 1.0; 
+    set_press_GPa_Z = 1.0; 
+    ctl.p_control_step = 20;
+    sys.pres_scalling_factor = 0.5;
+
+    sys.Ax = 5.63;   /* initial lattice constant [NaCl] */
+    sys.Ay = 5.63;
+    sys.Az = 5.63;
+    sys.nx = 3;	   /* number of unit cells in x-direction */
+    sys.ny = 3;
+    sys.nz = 3;
+  
+    sys.N = 8*sys.nx*sys.ny*sys.nz;  /* total number of ions [NaCl] */
+  
+    sys.Lx = sys.Ax * (double)sys.nx;   /* basic MD box size */
+    sys.Ly = sys.Ay * (double)sys.ny;
+    sys.Lz = sys.Az * (double)sys.nz;
+  
+    ctl.kinds_of_ions = 2;   /* Na or Cl: see also "identify_ion()" */
+
+   /*-----------------------------------------------------------------*/
+
+    * default setting:
+
+      - The function "identify_ion()" in "program/control.c":
+
+         Set-up the Na and Cl particles on NaCl lattice using
+         the notations of sys.ion[number] = [label: Na=0, Cl=1].
+
+              kind of ion    identifier (sys.ion[i])
+                  Na                0
+                  Cl                1
+
+         All particles are numbered sequentially "0" to "sys.N". Here
+         the function sys.ion[i] identify the kind of number "i"
+         particle. For example, in this case [NaCl],
+
+           sys.ion[0] = 0   -> the kind of number "0" ion is [Na]
+           sys.ion[1] = 1   -> the kind of number "1" ion is [Cl]
+                  ..................................
+ 
+           sys.ion[i] = 0 or 1 -> 
+                       the kind of number "i" ion is [Na] or [Cl]
+                  ..................................
+
+           sys.ion[sys.N-1] = 0 -> 
+                         the kind of number "sys.N-1" ion is [Na]
+           sys.ion[sys.N] = 1 -> 
+                           the kind of number "sys.N" ion is [Cl]
+
+         where the identifier "sys.ion[]" are integer values ranging
+         from 0 up to "ctl.kinds_of_ions - 1" (see also
+         "get_control_param()").
+
+      - The function "set_loc()" in "program/control.c":
+         Set-up the Na and Cl atoms on a NaCl crystal lattice.
+
+      - The function "set_potential()":
+         Specify the potential parameter set.
+
+      - basic MD cell size (sys.Lx * sys.Ly * sys.Lz):
+         sys.Lx = sys.Ax*(double)sys.nx;
+         sys.Ly = sys.Ay*(double)sys.ny;
+         sys.Lz = sys.Az*(double)sys.nz;
+
+    * initial particle velocities:
+
+      Initial particle velocities are set by "set_vel()" in
+      "program/init.c". The function calls "nrand()" in
+      "program/ext.c". The function "nrand()" will generates normally
+      distributing random real number sequence using Box-Muller
+      method[10][11]. The normal distribution of random numbers is
+      defined by;
+
+         /* double   nrand(double temp, double bunsan): */
+         /*                1                            */
+         /*   p(y)dy = ---------- Exp[-y^2/2] dy        */
+         /*             Sqrt[2Pi]                       */
+         /*                                             */
+         /*  mean value => temp                         */
+         /*  dispersion => bunsan                       */
+
+      The random number seed which is used as a "seed" of random real
+      number sequence will be automatically set using internal UNIX
+      time call function "time()" as;
+
+          seed = (unsigned int)time( 0 );
+          srand( seed );
+
+      The resultant averaged velocity (mean value) corresponds to an
+      initial setting temperature "ctl.temp" which is defined in the
+      "get_control_param()". The half-width at the half maximum of the
+      normal distribution of the "temperature (particle velocity)" is
+      defined by the variable "bunsan" which is currently fixed at 5
+      [K] as "double bunsan = 5.0;" in the "set_vel()" of "init.c".
+
+      note :The function "nrand()" sets the initial temperature lager
+            than 50 [K].
+
+      note :To set all velocity of atoms to be zero, comment out
+            the function in init.c , as "/* set_vel(): */".
+
+    * input/output file manipulation:
+
+      The pointer declaration for input/output files are specified 
+      in the file "program/md.h" as
+
+      /* input and output files */
+      FILE *fpin, *fpout, *fpout_positions, *fpout_velocities;
+
+      These will be opened in "open_files()" of "program/files.c" as;
+      "fpout = fopen("../files/out","w")".
+
+    * potential cutoff radious in real-space:
+
+      The short range repulsive term and the real space term of the
+      EWALD method are considered in the sys.radius [A] region
+      (minimum image distance method : no replica cell
+      consideration). The cutoff length is defined in
+      "get_control_param()" of "program/control.c";
+ 
+       sys.radius = 8.0;  /* [A] */
+
+      which is fixed to be 8.0 [A]. You can modify the value by
+      directly editing the corresponding line of "control.c".
+
+      * note: "sys.radius" (must be) <= Min[MD-basic-cell-size]/2.0
+
+    * total reciprocal lattice points for EWALD calculation:
+
+      The maximum number of reciprocal lattice points will be
+      automatically generated under the condition of
+
+       sys.hm (|hm^2|) > h^2 + k^2 + l^2
+
+      where {h, k, l} is a reciprocal lattice point vector. The value
+      of "sys.hm" is defined in "init_sys()" of "program/init.c" as;
+
+       sys.hm  = 20;   /* = {h^2 + k^2 + l^2}_MAX  */
+
+      For example, the condition {h^2 + k^2 + l^2} < 20 gives the 194
+      reciprocal lattice points in the reciprocal semi-sphere lattice
+      space (total points in the reciprocal sphere lattice space = 194
+      X 2 = 388).
+
+      note: As V(q) = V(-q), the sum for the reciprocal lattice
+            vectors can be taken in the semi-sphere space.
+
+      See also the function "reciprocal_space()" in
+      "program/rcprcl.c".
+
+          # [BUG-FIX]
+          # In the IEMD2 Ver.1.7, the sign of the force originated
+          # from the EWALD 2nd term (reciprocal force) was WRONG!
+          #
+          # The line (line 85 rcprcl.c)
+	  #   foc = v2_ex_per_hh2* (sys.rcsi[i]*sys.rsni[sys.N] - 
+	  #     sys.rsni[i]*sys.rcsi[sys.N]);
+          # must be changed to 
+	  #   foc = -v2_ex_per_hh2* (sys.rcsi[i]*sys.rsni[sys.N] - 
+	  #     sys.rsni[i]*sys.rcsi[sys.N]);
+          # The sign "+" must be reversed to "-". This bug is now
+          # fixed at IEMD Ver. 1.8.
+
+    * "alpha" parameter for EWALD calculation:
+
+      An "alpha" parameter is a constant (0.1 < alpha < 1.0 in
+      [A^(-1)] unit). The constant specifies the size of the Gaussian
+      distribution of the charge. The parameter accelerates the EWALD
+      calculation for the Coulomb potential while keeping the
+      numerical accuracy.
+
+    * How to estimate an appropriate "alpha" value:
+
+      The estimation is somewhat difficult. One of the practical way
+      is to calculate potential for a particle changing "alpha" value,
+      and plot it graphically (X-axis: alpha, Y-axis: potential), and
+      accepts an "alpha" value within the FLAT range of the plot. 
+
+      By default, the parameter is set as
+        sys.a1   = 0.20375;  /* alpha setting for EWALD calculation */
+      in "get_control_param()" in "program/control.c" for NaCl 
+      3x3x3 system under sys.hm=20 condition.
+
+      * [TIPS] IEMD can help you to estimate the appropriate alpha
+        value by enabling the following line of "newton()" in
+        "main.c";
+
+          calc_alpha();
+
+ 	and type "make" and "md" to get a numerical table of "alpha"
+        vs.  "calculated EWALD+REPULSION potential". Plot it using a
+        graph tool and find the FLAT range of "alpha" value.
+
+        To subtract the repulsive potential part, you can just change
+        the line of mk_table() in "control.c" as
+
+	   sys.pe1r1[ij*(sys.table_division+1)+ddr] = p_e1 + p_r1;
+        to 
+	   sys.pe1r1[ij*(sys.table_division+1)+ddr] = p_e1;
+        so that only the coulomb potential part will be evaluated.
+
+
+        If there is NO nearly flat range, change the "sys.hm" and/or
+        "sys.radius" and/or MD cell sizes, and plot again the
+        calculated numerical table(s) to search the appropriate value.
+
+ 	related functions: "calc_alpha()" and "reciprocal_space3a()" 
+	in "init.c".
+
+    * error function:
+
+      The error function in the EWALD calculation is defined in
+      "program/ext.c" as "double erfcc(double x)". This function
+      returns an approximated ERFC value.
+
+    * momentum correction:
+
+      Momentum of the system is automatically corrected for every 1000
+      MD time steps. This is done in "newton()" of "program/main.c"
+
+      -----
+      /* momentum correction for every 100 MD steps */
+          if(sys.step % 1000 == 0){moment_correction();}; 
+      -----
+      See also the function "moment_correction()" in "rv.c".
+
+    * How to change the model system:
+
+      All of the specific parameters for model material [default :
+      NaCl 3x3x3] are set by some functions in "program/control.c"
+      and/or "program/init.c". 
+
+      For example, if you want to perform a MD calculation of SrTiO_3
+      (perovskite) crystal system, you should change the following
+      parts;
+ 
+      in the file "program/control.c":-------------------------
+
+        (1) function: "get_control_param()" 
+        ------------
+          sys.nx = 3;   /* number of unit cells of x-direction */
+          sys.ny = 3;	/* number of unit cells of y-direction */
+          sys.nz = 3;	/* number of unit cells of z-direction */
+
+          ctl.kinds_of_ions = 3; /* Sr or Ti or O */
+
+          sys.Ax = 3.905;  /* [SrTiO_3 lattice constants] */
+          sys.Ay = 3.905;
+          sys.Az = 3.905;
+          sys.N = (number of atoms in a unit cell)*sys.nx*sys.ny*sys.nz;
+
+        ------------
+         # (number of atoms in a unit cell) is an integer
+
+        ------------
+         /* number of atoms in primitive Mol unit */
+         /* e.g.: NaCl rock-salt => 2 atoms       */
+         ctl.natoms_in_mol_unit  = 5;
+        ------------
+         # (No. of SrTiO_3 in Mol. unit) is an integer
+
+        (2) "identify_ion()" (program/control.c)
+        ------------
+
+         # Set-up the Sr, Ti and O particles on the lattice using
+         # the notations of sys.ion[number] = [label: Sr=0, Ti=1,
+         # O=2]. For example, if the number 5 particle is Sr, and
+         # number 6 particle is O, the sys.ion[] must be set as
+         # sys.ion[5]=0, sys.ion[6]=2.
+
+        (3) "set_loc()" (program/control.c)
+        ------------
+
+         # Set-up the Sr, Ti and O particle geometorical locations on
+         # the lattice system in [A] unit.
+
+        (4) "set_potential()"
+            (program/control.c)
+        ------------
+         # set the mass, effective charge, repulsion force parameters.
+
+         (5) The appropriate "sys.hm", "sys.radius", and "alpha" value
+             must be chosen. See previous chapters to optimize these
+             values for your system.
+
+    * MD calculation under other cyclic boundary condition.
+
+      For a calculation using other cyclic boundary conditions such
+      as triclinic, hexagonal lattice, or 2-D systems, you should
+      re-write "rv.c" according to your model definition. 
+
+      An another EWALD like scheme for the calculation of the long range
+      Coulombic interaction under the special boundary condition must be 
+      implemented ("rcprcl.c" and "real.c"). 
+
+    * The target temperature is set in the function
+      "get_control_param()" in "program/control.c";
+
+        ctl.temp = 300.0;            /* Temperature setting [K] */
+        ctl.t_control_step = 5;
+
+      this means that the target temperature is 300.0 [K], and the
+      system will be regulated every 5 MD time steps by the velocity
+      scaling method. The observed "Temperature" is calculated using
+
+                    1                     3           3
+       E_kinetic = --- Sum{ m_i v_i^2} = --- n R T = --- N k_B T
+                    2                     2           2
+                       Sum{m_i v_i^2}
+       T_(observed) = ----------------
+                          3 N k_B
+      where, 
+         n:    [Mol.]
+         N:    = (n x N_A) = number of particles
+         R:    gas constant = N_A k_B  ( N_A:  Avogadro constant)
+         k_B:  Boltzmann constant
+         m_i:  mass of i'th particle
+         v_i:  velocity of i'th particle
+
+      All of the particle velocities will be scalled using
+                          T_target
+       v_i(new) = (---------------------)^(1/2) v_i(old)
+                    T_observed(average)
+      to achieve the constant temperature condition if you enable 
+      the following line:
+
+        control_temp(ctl.t_control_step, ctl.temp);
+
+      in the file "main.c". 
+
+      Here "T_observed(average)" is an averaged "T_observed" value
+      (mean value) for the particles over "ctl.t_control_step"s.
+
+    * The target pressure is set in the function "get_control_param()"
+      in "program/control.c";
+
+       set_press_GPa_X = 1.0;       /* Pressure setting  [GPa] */
+       set_press_GPa_Y = 1.0; 
+       set_press_GPa_Z = 1.0; 
+       ctl.p_control_step = 20;
+       sys.pres_scalling_factor = 0.5; 
+
+      This means that the target pressure tensors are
+      P_xx = P_yy = P_zz = 1.0 [GPa] (hydrostatic pressure). 
+
+      The system (MD cell size) will be regulated at every 20 time
+      steps by a cell size scaling method to achieve the target
+      pressure (Kawamura's method: extended Andersen method) if you
+      enable the following line:
+
+        control_press(ctl.p_control_step);
+
+      in the file "main.c". 
+
+      Pressure is measured using the VIRIAL:
+
+        VIRIAL = (inter-atomic forces)*(inter-atomic distances)
+
+      This expression will avoid the difficulty to calculate the
+      VIRIAL under the cyclic boundary condition. (see e.g. Ref[19])
+
+      #-------------------------------------------------------------------
+      # notice:
+      #
+      # For ionic systems, we used the minimum image distance convention 
+      # to evaluate the VIRIAL. The VIRAL term consists of 
+      #   (short range repulsion) + (EWALD 1st term [real space]).
+      # This method is an approximation, however, is accurate enough
+      # for the MD simulation :-).
+      #
+      # For the covalent systems (e.g. AT or SW potential), only the
+      # 2-body term is considered for the VIRIAL (real.c). 
+      # This should be fixed.
+      #-------------------------------------------------------------------
+ 
+      The MD cell box will be scalled as
+
+        SX = 1.0 + atan( dpx )*sys.pres_scalling_factor;
+        SY = 1.0 + atan( dpy )*sys.pres_scalling_factor;
+        SZ = 1.0 + atan( dpz )*sys.pres_scalling_factor;
+
+      in "control_press()" of "program/pt.c". The default setting
+      of "sys.pres_scalling_factor" is 0.5. 
+
+      The pourpose of using a function "atan()" is to achieve the
+      target pressure smoothly and to stabilize the system at the
+      pressure.
+
+    * Pressure and Temperature control functions are written in
+      "program/pt.c" ("control_press()" and "control_temp") which will
+      be called by the function "newton()" in "program/main.c" as
+
+         /* pressure and temprature control */
+         control_press(ctl.p_control_step);
+         control_temp(ctl.t_control_step,ctl.temp);
+
+      To schedule pressure and/or temperature, you should directly
+      edit the "newton()" in "program/main.c". 
+      Here is an example for the scheduling.
+
+       /* pressure and temprature control */
+        control_press(ctl.p_control_step);
+        if(sys.step >0 && sys.step <2001) ctl.temp = 500.0;
+        control_temp(ctl.t_control_step,ctl.temp);   
+
+         -------------------------------------------------------------
+         * By default, IEMD will calculate microcanonical ensemble MD
+           (NVE const.), where the total energy will be conserved over
+           the MD calculation.
+         -------------------------------------------------------------   
+
+    * microcanonical ensemble MD (NVE constant MD) [DEFAULT setting]
+
+      In a microcanonical ensemble MD, total internal energy will be
+      conserved.
+
+    * Gear's method
+
+      MDC can use the Gear's method. Search the following two lines in
+      the function newton() of "main.c" and enable one of them.
+
+      ==== to use the Verlet's integration method =========
+        next_rv_verlet(); 
+        /* next_rv_gear(); */
+
+      ==== to use the Gear's integration method ===========
+        /* next_rv_verlet(); */
+        next_rv_gear();
+
+      The algorithm of the Gear's method is k=7 F representation form. 
+      These functions are defined in the file rv.c. 
+
+[5] To calculate the system with Born-Mayer-Huggins potential using
+    Tosi-Fumi parameter set for NaCl crystal, you should copy all of
+    the files in the "examples/NaCl.hm/" directory into the "program/"
+    directory:
+
+       iemd@HPWS[1160]# ls
+       Relase.note   batch/        examples/     manual/
+       abst          dynamics/     files/        program/
+       iemd@HPWS[1161]# cd examples/
+       iemd@HPWS[1162]# ls
+       AT.C/  AT.C60/  AT.Ge/  AT.Si/  AgI/  CVS/  CaF2/  
+       NaCl.hm/  NaCl.sx1/  SW.Si/
+       iemd@HPWS[1163]# cd NaCl.hm
+       iemd@HPWS[1164]# ls
+       control.c     note          potential.h   real.c
+       iemd@HPWS[1165]# cp ./* ../../program/
+   
+    Type "make" in the "program" directory to make IEMD.
+
+       iemd@HPWS[1166]# cd ../../program/
+       iemd@HPWS[1167]# make
+
+    * How to change the potential model:
+
+      - The two-body central and composed of full ionic Coulomb and
+        short range repulsion terms interatomic potential function
+        are set by the function "set_potential()" in
+        "program/control.c":
+
+         /* function form:                                             */
+         /* u_(i,j) = Z_(i)*Z_(j)*e^(2)/r_(i,j) +                      */
+         /*    f(b_(i)+b_(j))*Exp[(a_(i)+a_(j)-r_(i,j))/(b_(i)+b_(j))  */
+
+      - The Tosi-Fumi parameters of NaCl system for Born-Mayer-Huggins
+        potential function model are set by the function
+        "set_potential_hm" in "program/control.c";
+
+         /*  function Form :                                           */
+         /* u_(i,j) = Z_(i)*Z_(j)*e^(2)/r_(i,j) +                      */
+         /*     c_(i,j)*b*Exp((sigma_(i) + sigma_(j) - r_(i,j))/rho)   */
+         /*  - ( C_(i,j)/(r_(i,j)^(6)) ) - ( D_(i,j)/(r_(i,j)^(8)) )   */
+
+      If you want to calculate another potential model such as 3-body
+      interaction potential, you should make a new "structure element"
+      in "program/potential.h" file. For example (in "program/potential.h");
+
+         typedef struct {
+             /* ------------------------------- */
+             /*   3-body potential              */
+             /* ------------------------------- */
+               double a_to_b_to_c;
+                ..................
+         } three_body_potential_set;
+
+      and add a decralation for this at the end of "potential.h" as
+      
+        three_body_potential_set three_body;
+
+      so that the parameters can be reffered in the IEMD as 
+
+        three_body.a_to_b_to_c = 0.105;
+
+      Next, to set initially the potential parameters, you should
+      write a new function "set_potential()" and "mk_table()" in
+      "program/control.c".
+
+      The funcion "mk_table()" will create a look up table for
+      potential and force (repulsion + EWALD 1st term) with 0.001
+      [A] division for distances dr.
+
+       # The purpose of the function is to accelerate the force
+       # calculation. However, this strategy sometimes should not be
+       # effective depending on the target MD system.
+       # In that case, please modify the source codes and calculate 
+       # DIRECTORY the potential and force.
+
+      NOTE: Some examples of many-body potential calculation setting 
+            for covalent systems are included in the directory 
+            "examples":
+
+             AT.C/  AT.C60/  AT.Ge/  AT.Si/ SW.Si/
+
+[6] Output format:
+
+    The MDC automatically display current status. A typical display
+    output (tty output) is:
+
+    ========
+      step: Ek :  Up   :  Et   :  T[K] : P[Gpa] ( Ax   Ay   Az )
+         1 3.78 -817.30 -813.51  303.47 -0.603   5.63 5.63 5.63
+         2 3.78 -817.15 -813.37  303.20 -0.585   5.63 5.63 5.63
+         3 3.77 -817.32 -813.56  301.98 -0.604   5.63 5.63 5.63
+         4 3.74 -817.29 -813.55  300.10 -0.587   5.63 5.63 5.63
+         5 3.71 -817.46 -813.75  297.20 -0.602   5.63 5.63 5.63
+    ---------------------------------------------------------------
+    >> Temperature scaling
+         6 3.64 -817.05 -813.41  292.01 -0.578   5.63 5.63 5.63
+         7 3.59 -818.25 -814.66  287.81 -0.648   5.63 5.63 5.63
+         ............................    
+    ========
+
+    Where, "step" is a current MD calculational time step. "Ek", "Up",
+    and "Et" are the kinetic, potential, and total energy at that
+    time step in unit [J/Mol] respectively. "T[K]" is the "MD observed"
+    temperature in [K] unit, and "P" is the "MD observed pressure" in
+    [GPa (=Giga pascal)] unit. The column ( Ax   Ay   Az ) are
+    "MD observed (calculated)" lattice constants [A] of the unit cell
+    at that MD time step. The definitions of "observed lattice
+    constants" are;
+ 
+        Ax = sys.Lx/sys.nx
+        Ay = sys.Ly/sys.ny
+        Az = sys.Lz/sys.nz
+
+    * To record all of the above physical quantities in a file, enable
+      the following line ("program/main.c" file),
+
+       /* file output              */
+       /*   print_to_file();       */
+
+      as
+
+       /* file output              */
+          print_to_file();
+
+      and type "make" (or "make -f Makefile.X"). These numerical
+      values will be recorded sequentially in the file "files/out".
+
+      * related function (in "program/files.c"): 
+        "display1()", "display2()", "no_display()" and
+        "print_to_file()"
+
+[7] To record all of the atomic positions at each time-step, enable
+    the following line ("program/main.c" file),
+
+    /* record position data in [A] unit "files/positions"         */
+    /*    r_position();     */
+
+    as
+
+    /* record position data in [A] unit "files/positions"         */
+        r_position();     
+
+    And type "make" (or "make -f Makefile.X").
+
+    The record format of "files/positions" is:
+        valiables: sys.ion[i],sys.rx[i],sys.ry[i],sys.rz[i]
+        format:    "%d %5.3f %5.3f %5.3f "
+
+    * related function (in "program/files.c"): 
+        void   r_position(void) 
+        void   r_velocities(void) 
+
+[8] external mathematical function Erfc():
+--------------------------------------------------------------------------
+
+    * The error function ERFC is defined in "erfcc()" of
+      "program/ext.c". Here we used a "M. Mori"'s method which
+      evaluate the ERFC with high relative accuracy.
+
+   [function definition]:
+
+     erf[x] = 2/Sqrt[Pi] Integral[Exp[-t^2], {t,0,x}]
+     erfc[x] = 1 - erf[x] = 2/Sqrt[Pi] Integral[Exp[-t^2], {t,x,Infinity}]
+
+     erf[-x] = -erf[x]
+     erfc[-x] = 1+erf[x] = 2 - erfc[x]
+
+   [approximated representation for 0.1 < x < 6 case]:
+
+     erfc[x] => (2.0 x / PP)Exp[-x^2] h
+                (1.0/(2.0 x^2) + 
+                 Sum[Exp[-n^2 h^2]/((n h)^2 + x^2),{n,1,13}]) - 
+                 2.0/(Exp[2.0 PP x/h]-1.0)
+
+     h -> 0.5, PP -> Pi
+
+   [Mathematica execution log. for proof]:
+    << Mathematica is a trademark of Wolfram Research Inc. >>
+-----------------
+In:=
+   Clear[MyErfc]
+   MyErfc[x_]:=(2.0 x / PP)Exp[-x^2] h
+       (1.0/(2.0 x^2) + Sum[Exp[-n^2 h^2]/((n h)^2 + x^2),{n,1,13}])-2.0/(
+        Exp[2.0 PP x/h]-1.0)
+
+In:=
+   approximatedERFC=N[MyErfc[x]/.{h->0.5,PP->Pi},16]
+
+(* evaluate the cofficients *)
+In:=
+   N[ E^(4 Pi x),16 ]
+Out:=
+   (2.71828182845904509^(12.5663706143591724 x)
+
+In:=
+   N[E,16]
+Out:=
+   2.718281828459045
+
+In:=
+   N[4 Pi, 16]
+Out:=
+   12.56637061435917
+
+In:=
+   N[Pi,16]
+Out:=
+   3.141592653589793
+
+(* evaluate the "differences" from exact value of Erfc() *)
+In:=
+   differences = 
+     Table[ N[MyErfc[x]/.{h->0.5,PP->Pi},16]-N[Erfc[x],16],{x,0.01,3.0,0.01}];
+
+In:=
+   Max[differences]
+Out:=
+   1.33226762955018784^(-15)
+
+(* evaluate the "differences" from exact value of Erfc() *)
+In:=
+   differences2 = 
+     Table[ N[approximatedERFC/.{h->0.5,PP->Pi},16]-N[Erfc[x],16],{x,0.01,3.0,
+         0.01}];
+
+In:=
+   Max[differences2]
+Out:=
+   1.33226762955018784^(-15)
+
+(* C form output *)
+In:=
+   CForm[ approximatedERFC ]
+Out:=
+   -2./(-1. + Power(2.718281828459045,12.56637061435917*x)) + 
+      (0.3183098861837907*x*(0.5/Power(x,2) + 
+           0.7788007830714049/(0.25 + Power(x,2)) + 
+           0.3678794411714423/(1. + Power(x,2)) + 
+           0.1053992245618643/(2.25 + Power(x,2)) + 
+           0.01831563888873417/(4. + Power(x,2)) + 
+           0.001930454136227709/(6.25 + Power(x,2)) + 
+           0.0001234098040866795/(9. + Power(x,2)) + 
+           4.785117392129008e-6/(12.25 + Power(x,2)) + 
+           1.125351747192591e-7/(16. + Power(x,2)) + 
+           1.605228055185611e-9/(20.24999999999999 + Power(x,2)) + 
+           1.388794386496401e-11/(25. + Power(x,2)) + 
+           7.287724095819693e-14/(30.24999999999999 + Power(x,2)) + 
+           2.319522830243569e-16/(36. + Power(x,2)) + 
+           4.4777324417183e-19/(42.24999999999999 + Power(x,2))))/
+       Power(2.718281828459045,1.*Power(x,2))
+-----------------
+    * See the reference for more details of the method.
+
+[X] X Window interface option switch (Makefile.X):
+--------------------------------------------------------------------------
+
+    [X0] make:
+
+      To make MDC with real-time X-Window display system, you
+      should re-make the code using following command.
+
+      ===========
+          iemd@HPWS[275]# make -f Makefile.X clean   <- clean up 
+          iemd@HPWS[276]# make -f Makefile.X         <- make X-IEMD
+      ===========
+
+      [TIPS]: If you REPLACE the default "Makefile" with
+              "Makefile.X" using "cp" as; 
+              ===========
+                  iemd@HPWS[280]# cp Makefile.X Makefile
+              ===========
+              you can make the X-IEMD without the option flag of
+              "-f Makefile.X" as;
+              ===========
+                  iemd@HPWS[281]# make clean   <- clean up 
+                  iemd@HPWS[282]# make         <- make X-IEMD
+              ===========
+      see also "manual/how2make".
+
+    * Makefile.X option
+
+    RUN_OPTIONS= -DXD
+
+    [X1] XD:
+
+      A real time X-Window display of some projection views (x-y, y-z,
+      z-x, x-y-z projection) of the MD system. Note that the displayed
+      cell size (x, y, and z) is not proportional to the real MD cell
+      size (Lx, Ly or Lz). If you need a projected graphics that
+      dimensions are proportional to the real MD system dimensions,
+      you must directory custamize the xdmain.c xunit.c, and xnet.c.
+
+    [X2] XHIST
+
+      This switch enables a real time observation of some physical
+      values (temperature, pressure, internal energy) of the MD
+      system. 
+
+      See your X-Window manual for more detail.
+
+--------------------------------------------------------------------------
+* References:
+--------------------------------------------------------------------------
+
+[1]  G. Ciccotti and W. G. Hoover eds, "Molecular Dynamics Simulation
+       of Statistical-Mechanical Systems", North-Holland Physics
+       Publishing (1986).
+
+[2]  Yasuaki Hiwatari, Solid State Physics (KOTAIBUTSURI: Japanese),
+       <Vol. 17, No. 3, 141 (1982)>, <Vol. 17, No. 4, 197 (1982)>,
+       <Vol. 17, No. 6, 317 (1982)>, <Vol. 17, No. 8  453 (1982)>,
+       <Vol. 24, No. 277, pp108(242)-118(252) (1989)>.
+
+[3]  D. W. Heermann, "Computer Simulation Methods in Theoretical
+       Physics" (2nd edn.), Springer-Verlag, (1990).
+
+[4]  Katsuyuki Kawamura, "PASOKON BUNSHI SIMULATION", (Japanese),
+       KAIBUNDO, (1990).
+
+[5]  Katsuyuki Kawamura, Solid State Physics (KOTAIBUTSURI: Japanese),
+       Vol. 29, No. 12, 909 (1994).
+
+[6]  M. Tanaka and R. Yamamoto eds, "KEISAN BUTSURIGAKU TO KEISAN
+       KAGAKU", (Japanese), KAIBUNDO, (1988).
+
+[7]  Akira Ueda, "COMPUTER SIMULATION", (Japanese),
+       ASAKUEA SYOTEN, (1990).
+
+[8]  Y. Kawazoe, M. Mikami, K. Ohno, "COMPUTER SIMULATION NI-YORU
+       BUSSITSU-KAGAKU", (Japanese), KYOURITSU-SYUPPAN, (1996).
+
+[9]  F. Yonezawa ed., "Molecular Dynamics Simulations",
+       Solid-State Sciences 103, Springer-Verlag, (1992).
+
+[10] M. P. Tosi and F. G. Fumi, J. Phys. Chem. Solids 23, 359 (1962).
+
+[11] H. C. Andersen, J. Chem. Phys. 72, 2384 (1980).
+
+[12] S. Nose' and M. L. Klein, Mol. Phys. 50, 380 (1983).
+
+[13] M. Parrinello and A. Rahman, Phys. Rev. Lett. 45, 1196 (1980)
+
+[14] M. Mori, "A Method for Evaluation of the Error Function of Real
+       and Complex Valiable with High Relative Accuracy", RIMS, Kyoto
+       University Japan, 19, 1081 (1983).
+
+[15] M. Mori, in "Fortran77 NI YORU SUUCHI KEISANN SOFTWARE",
+       (Japanese), T. Watanabe, M. Natori, and T. Oguni eds, MARUZEN,
+       96 (1989).
+
+[16] M. Hirabayashi, "SAISHIN PROGRAM JITEN vol.1", (Japanese),
+       GIJYUTSU HYOURON SYA, (1992).
+
+[17] W. H. Press, S. A. Teukolsky, W. T. Vetterling, and
+       B. P. Flannery, "Numerical Recipes in C", 2nd ed., Cambridge
+       University Press (1992).
+
+[18] Stephen Wolfram, "The Mathematica Book, 3rd ed.", Wolfram
+       Media/Cambridge University Press, (1996).
+
+[19] M.P. Allen and D.J. Tildesley eds, "Computer Simulation in
+       Chemical Physics", Kluwer Academic Publishers,
+       (Dordrecht/Boston/London), (1993).
+
+[20] Susumu Okazaki, "COMPUTER SIMULATION NO KISO" (Japanese),
+       Kagaku-dojin, (2000).
+
+--------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------
+* Appendix: general FLOW CHART of the IEMD2
+--------------------------------------------------------------------------
+  note: all global variables are defined in the header files <*.h>.
+        function prototypes are defined in the file <prototypes.h>.
+
+--------------------------------------------------------------------------
+1	main: int(), <main.c 6>
+2		open_files: void(), <files.c 7>
+3			fopen: <>
+4			fpout: struct*, <md.h 20>
+5			printf: <>
+6			exit: <>
+7			fpout_positions: struct*, <md.h 20>
+8			fpout_velocities: struct*, <md.h 20>
+9			fprintf: <>
+10		newton: void(), <main.c 14>
+11			init: void(), <init.c 10>
+12				get_control_param: void(), <control.c 15>
+13					ctl: struct, <md.h 199>
+14					sys: struct, <md.h 198>
+15				unit_converter: void(), <init.c 25>
+16					sys: 14
+17					sqrt: <>
+18					ctl: 13
+19				init_mem: void(), <init.c 83>
+20					calloc: <>
+21					ion: struct, <md.h 197>
+22					msd: struct, <md.h 201>
+23				set_potential: void(), <control.c 85>
+24					sqrt: 17
+25					ion: 21
+26					hm: struct, <potential.h 28>
+27				identify_ion: void(), <control.c 46>
+28				set_loc: void(), <control.c 60>
+29				set_vel: void(), <init.c 158>
+30					sqrt: 17
+31					nrand: double(), <ext.c 20>
+32						time: <>
+33						srand: <>
+34						sin: <>
+35						sqrt: 17
+36						sys: 14
+37						rand: <>
+38						log: <>
+39						cos: <>
+40				moment_correction: void(), <rv.c 88>
+41			mk_table: void(), <control.c 183>
+42				erfcc: double(), <ext.c 73>
+43					exp: <>
+44				exp: 43
+45			ctl: 13
+46			sys: 14
+47			next_rv_verlet: void(), <rv.c 26>
+48				calc_foc: void(), <rv.c 12>
+49					clear_foc: void(), <init.c 176>
+50					real_space: void(), <real.c 15>
+51						sys: 14
+52						ctl: 13
+53						sqrt: 17
+54					reciprocal_space: void(), <rcprcl.c 11>
+55						sys: 14
+56						exp: 43
+57						cos: 39
+58						ion: 21
+59						sin: 34
+60					reciprocal_space3: void(), <rcprcl.c 108>
+61				next_v: void(), <rv.c 33>
+62					sys: 14
+63					ion: 21
+64				next_r: void(), <rv.c 46>
+65			calc_kin: void(), <rv.c 68>
+66			calc_press: void(), <pt.c 8>
+67				sys: 14
+68			display1: void(), <files.c 64>
+69				printf: 5
+70			calc_msd: void(), <msd.c 20>
+71				sys: 14
+72				msd: 22
+73				ctl: 13
+74			print_to_file: void(), <files.c 39>
+75				fprintf: 9
+76				sys: 14
+77				ctl: 13
+78				msd: 22
+79				fflush: <>
+80			control_press: void(), <pt.c 27>
+81				ctl: 13
+82				atan: <>
+83				printf: 5
+84			moment_correction: 40
+85		close_files: void(), <files.c 31>
+86			fclose: <>
+87	net: struct, <md.h 200>
+88	control_temp: void(), <pt.c 86>
+89		sqrt: 17
+90		printf: 5
+91	calc_alpha: void(), <init.c 195>
+92		mk_table: 41
+93		real_space: 50
+94		reciprocal_space: 54
+95		reciprocal_space3a: void(), <init.c 224>
+96		printf: 5
+97		exit: 6
+98	display2: void(), <files.c 91>
+99		printf: 5
+100	no_display: void(), <files.c 116>
+101		printf: 5
+102	r_position: void(), <files.c 138>
+103		fprintf: 9
+104	r_velocities: void(), <files.c 156>
+105		fprintf: 9
+106	next_rv_gear: void(), <rv.c 125>
+107		calloc: 20
+108		gear: struct, <md.h 202>
+109		calc_foc: 48
+--------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------
+=============================================================================
+END.

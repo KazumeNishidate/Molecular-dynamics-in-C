@@ -1,0 +1,32 @@
+ CaF2 (super ionic conductor)
+
+---------------------------------------------------------
+
+  dt = 2.34 [fs]
+  system size = 3 x 3 x 3
+  alpha = 0.2 [A^(-1)]
+  sys.hm = 23
+  cut off = 7.5 [A] 
+  ctl.temp = 1681.0 [K]
+
+  initial temperature  
+  ctl.temp = 1681 [K]
+
+---------------------------------------------------------
+
+REF.:
+
+[1] Y. Kaneko and A. Ueda, "Molecular Dynamics Studies of
+    Superionic Conductor CaF2", J. Phys. Soc. Jpn., Vol. 57, No. 9,
+    3064 (1988).
+
+[2] A. Fukumoto, A. Ueda, and Y. Hiwatari, "Molecular Dyanmic Studies of
+    Superionic Conductors. Interionic Potential and Ion-Conducting
+    Phase", J. Phys. Soc. Jpn., 3966 (1982).
+
+[3] Y. Kaneko and A. Ueda, "Dynamics and Mechanism of Diffusion in
+    Superionic Conductors", Strongly Coupled Plasma Physics,
+    S. Ichimaru (ed.), Elsevier Science Publishers B. V. / Yamada
+    Science Foundation, 631 (1990)
+
+----------------------------------------------------------------------
