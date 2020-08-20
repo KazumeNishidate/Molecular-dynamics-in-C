@@ -1,0 +1,15 @@
+single- & double- walled nanotube
+
+the function in order to create a structure of a single- or
+double-walled carbon nanotube.
+
+     multiwall_nanotube( int i, int n1, int m1, int n2, int m2 )
+
+where
+
+i      --> the number of walls which construct a tube. ( 1 or 2 )
+           1 : single-walled carbon nanotube.
+           2 : double-walled carbon nanotube.
+n1, m1 --> chiral indecs of the inner tube.
+n2, m2 --> chiral indecs of the outer tube.
+           ( n2 may not equate n1, or m2 may not equate m1. )

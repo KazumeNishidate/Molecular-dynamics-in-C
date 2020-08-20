@@ -1,0 +1,3 @@
+
+in "program/tb_init.c"
+  ch.Npl = 101;  /* take the polynomials up to 100th  order */

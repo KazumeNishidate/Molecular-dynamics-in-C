@@ -1,0 +1,22 @@
+
+TBMDC-localize
+
+  O(N) Tight-binding Molecular Dynamics simulation code
+  
+  The code utilize the Fermatrix diagonalization method together 
+  with the Localization approach. These strategies effectively 
+  reduce the number of complicated calculations and realize
+  the order N computational method.
+
+  The code was developed by the TEAM IEMD project.
+  See also the manual file contained in the MDC (classical molecular
+  dynamics calculation program). 
+
+  https://sites.google.com/site/nisidatelab/home/sofutouea
+
+  Kazume Nishidate
+  nisidate@iwate-u.ac.jp
+
+  Takanori Ito
+  taka1@iwate-u.ac.jp
+
